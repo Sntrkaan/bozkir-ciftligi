@@ -1,0 +1,2580 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#15382f">
+<meta name="color-scheme" content="light">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bozkır Çiftliği">
+<meta name="format-detection" content="telephone=no">
+<title>Bozkır Çiftliği · Retro Tycoon</title>
+<style>
+:root{color-scheme:light;--ink:#243c30;--deep:#183b30;--leaf:#2e6847;--light:#fff8dd;--gold:#f5bd54;--line:#c9b384;--paper:#fcf0cd;--wood:#734f36}
+*{box-sizing:border-box}
+body{margin:0;background:#eee0b9;color:var(--ink);font:15px/1.4 system-ui,sans-serif;background-image:radial-gradient(#8c674517 1px,transparent 1px);background-size:6px 6px}
+main{max-width:1180px;margin:auto;padding:18px 22px 30px}
+button{font:700 13px/1.25 system-ui,sans-serif;color:var(--ink);background:#fff7dc;border:2px solid var(--line);border-radius:5px;padding:8px 11px;cursor:pointer;box-shadow:0 2px #d1b787}
+button:not(:disabled):hover{filter:brightness(1.08)}
+button:not(:disabled):active{transform:translateY(2px);box-shadow:none}
+button:focus-visible{outline:3px solid #186983;outline-offset:3px}
+button:disabled{cursor:default;background:#eee3c5;color:#695f4f;box-shadow:none}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.brand{display:flex;align-items:center;gap:12px}
+.mark,.icon{display:grid;place-items:center;border:2px solid #bd9e63;background:#fbe5a0;border-radius:5px;width:42px;height:42px;flex:none;font-size:23px}
+h1,h2,h3,p{margin:0}
+h1{font:900 clamp(17px,4vw,32px)/1.05 ui-monospace,Consolas,monospace;letter-spacing:-.075em;text-transform:uppercase}
+.kicker,.stat small,.frame-strip,.eyebrow{font:800 11px/1.4 ui-monospace,Consolas,monospace;letter-spacing:.06em;text-transform:uppercase}
+.kicker{color:#576648}
+#sound{background:var(--deep);color:var(--light);border-color:#315742;box-shadow:0 3px #102a21;white-space:nowrap}
+.scene{position:relative;border:4px solid var(--wood);border-radius:8px;overflow:hidden;background:#78b360;box-shadow:0 4px #473e2e,0 9px #b39b70}
+canvas{display:block;width:100%;height:auto;aspect-ratio:512/190;image-rendering:pixelated}
+.scene-label{position:absolute;top:10px;left:11px;background:#16392eea;color:#fff1c2;border:1px solid #ecd98c;padding:6px 9px;border-radius:3px;font:800 11px ui-monospace,Consolas,monospace}
+.frame-strip{display:flex;justify-content:space-between;gap:8px;align-items:center;background:#573d2d;color:#fff0bf;padding:7px 10px}
+.meter{display:flex;align-items:center;gap:7px;min-width:123px}
+progress{width:80px;height:9px;border:0;background:#8f7256;accent-color:#efbd58}
+progress::-webkit-progress-bar{background:#8f7256}
+progress::-webkit-progress-value{background:#efbd58}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:17px 0 10px}
+.stat,.panel,.quests{min-width:0;background:var(--paper);border:2px solid #b69c69;border-radius:6px;box-shadow:0 3px #c0a673}
+.stat{display:flex;align-items:flex-start;gap:8px;padding:9px 11px}
+.stat>span{font-size:21px}
+.stat strong{display:block;font:900 clamp(14px,2vw,23px)/1.05 ui-monospace,Consolas,monospace;overflow-wrap:anywhere}
+.stat .sub{font-size:11px;color:#526044;margin-top:3px}
+#notice{color:#36543e;min-height:35px;padding:6px 2px;font-size:13px}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,29%);gap:12px;align-items:start}
+nav{display:flex;flex-wrap:wrap;gap:5px;background:#e3d0a4;padding:8px;border-bottom:2px solid #c9b384}
+nav button[aria-pressed=true],#quantities button[aria-pressed=true]{background:var(--leaf);border-color:var(--deep);color:white;box-shadow:0 2px var(--deep)}
+.panel-inner{padding:12px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+h2{font:900 18px/1.2 ui-monospace,Consolas,monospace;text-transform:uppercase;letter-spacing:-.025em}
+#quantities{display:flex;gap:4px;flex-wrap:wrap}
+#quantities button{padding:5px 8px}
+#quickFeed{margin-bottom:10px}
+#quickFeed:not(:empty){display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+#list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.card{background:#fff9e6;border:1px solid #c8b181;border-left:4px solid #88a163;border-radius:4px;padding:8px;min-width:0}
+.card-top{display:flex;align-items:center;gap:8px}
+.card .icon{width:32px;height:32px;font-size:19px;background:#f7e7af}
+.card h3{font-size:13px}
+.card small,.quest small,#quickFeed small{display:block;font-size:11px;color:#536044}
+.controls{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.primary{background:var(--gold);border-color:#b77f2e;box-shadow:0 2px #b77f2e}
+.quests h2{background:#264a39;color:#ffefc0;padding:11px}
+#questList{display:grid;gap:7px;padding:8px}
+.quest{padding:8px;background:#fff8e0;border:1px solid #cfb688;border-radius:4px}
+.quest h3{font-size:13px}
+.quest .reward{margin:4px 0}
+.quest.done{border-color:#80a069;background:#eaf0cf}
+footer{margin-top:14px;color:#5b5a41;font-size:11px}
+.float{position:fixed;z-index:10;pointer-events:none;color:#14552d;background:#f6ffd9;border:1px solid #6b9f52;border-radius:4px;box-shadow:0 2px #365a39;padding:3px 6px;font:900 12px ui-monospace,Consolas,monospace;white-space:nowrap;animation:rise 1.1s ease-out forwards}
+@keyframes rise{0%{transform:translate(-50%,0);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-44px);opacity:0}}
+@media(max-width:760px){main{padding:12px}.workspace{grid-template-columns:1fr}.quests{grid-row:1}.quests h2{padding:8px}#questList{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:450px){.stats{grid-template-columns:repeat(2,1fr)}#questList,#list{grid-template-columns:1fr}.scene-label{top:5px;left:5px;font-size:9px;padding:3px}.frame-strip{font-size:9px}.meter{min-width:83px}progress{width:47px}}
+@media(prefers-reduced-motion:reduce){.float{animation-duration:.7s}@keyframes rise{from{opacity:1}to{opacity:0}}}
+.top-actions{display:flex;gap:7px;align-items:center}
+#settingsOpen{background:#fbe5a0;border-color:#bd9e63;white-space:nowrap}
+#plot{pointer-events:none}
+#farm{touch-action:pan-y}
+#visitAnimal{color:#fff1c2;border-color:#a08664;background:#694938;box-shadow:none;padding:4px 7px;white-space:nowrap;font-size:11px}
+.scene-tools{display:flex;align-items:center;gap:8px}
+.bulletin{display:grid;gap:5px;margin:13px 0 9px}
+.bulletin:empty{display:none}
+.news{display:flex;align-items:center;gap:9px;padding:7px 10px;border:1px solid #b3ab72;border-left:4px solid #66864d;border-radius:4px;background:#edf0c9;color:#294c3a;font-size:12px}
+.news p{flex:1}
+.news strong{font-size:13px}
+.news time{flex:none;font:800 12px ui-monospace,Consolas,monospace}
+.news.fair{border-left-color:#b27a34;background:#fff0ba;color:#53391f}
+.news.rain{border-left-color:#4f8196;background:#dfecdf;color:#2e5263}
+.news button{padding:4px 7px}
+dialog{width:min(440px,calc(100% - 24px));border:3px solid #734f36;border-radius:7px;background:var(--paper);color:var(--ink);padding:0;box-shadow:0 7px #43322b}
+dialog::backdrop{background:#152824af}
+.settings-head{background:#254837;color:#fff1ca;padding:12px;display:flex;align-items:center;justify-content:space-between}
+.settings-content{padding:13px;display:grid;gap:10px}
+.settings-content p{font-size:13px}
+.settings-actions{display:grid;gap:7px}
+.settings-actions[hidden],.confirm-box[hidden]{display:none}
+.confirm-box{background:#fff8df;border:1px solid #c6a573;border-radius:5px;padding:10px}
+.confirm-box div{display:flex;gap:7px;flex-wrap:wrap;margin-top:7px}
+.danger{color:#742c27;border-color:#b88168;background:#f5d7b7}
+#settingsStatus{min-height:18px;color:#6c3427}
+@media(max-width:450px){#settingsOpen{font-size:0;padding:6px}#settingsOpen span{font-size:17px}#sound{font-size:11px;padding:7px 6px}.scene-tools{gap:4px}#visitAnimal{padding:3px 4px;font-size:9px}.news{gap:5px;padding:5px 6px}.news button{font-size:10px}}
+.brand-name{display:block;padding:0;border:0;background:transparent;box-shadow:none;border-radius:2px;text-align:left;letter-spacing:inherit;text-transform:inherit;font:inherit;color:inherit;overflow-wrap:anywhere;line-height:1.12}
+.brand-name:hover{text-decoration:underline;text-decoration-color:#ad894f;text-underline-offset:4px}
+.brand,.brand>div{min-width:0}.top-actions{flex:none}
+#farmTitle{margin-top:3px;color:#50634b}
+#nameForm{display:grid;gap:9px}
+#nameForm input{font:inherit;width:100%;padding:8px;border:2px solid var(--line);border-radius:4px;background:#fff9df;color:var(--ink)}
+#nameForm .name-actions{display:flex;justify-content:flex-end;gap:7px}
+.price-up{color:#23663a}.price-down{color:#9b332d}.price-steady{color:#67614f}
+.card .icon.breed{width:46px;height:35px;background:#f5e9b8}
+.icon.breed svg{display:block;width:42px;height:30px;shape-rendering:crispEdges}
+.market-head{padding:7px 9px;background:#fff8df;border:1px solid #c4ab76;border-radius:4px}
+.market-head strong{font-family:ui-monospace,Consolas,monospace}
+.market-head small{display:block;color:#526044}
+.float.lucky{color:#6b3e0b;background:#fff2a5;border-color:#c48429;box-shadow:0 0 10px #ffde50,0 2px #ac782e}
+@media(max-width:450px){.brand .mark{display:none}}
+
+.scene{isolation:isolate}
+.cargo{position:absolute;z-index:2;right:10px;top:10px;display:flex;align-items:center;gap:7px;background:#fff4ce;border-color:#8d662f;box-shadow:0 2px #785231;padding:5px 8px;min-height:38px;text-align:left}
+.cargo-wheel{display:grid;place-items:center;width:24px;height:24px;border:2px solid #744625;border-radius:50%;background:conic-gradient(#e8b055 0 33%,#aa7458 0 66%,#84aa72 0);color:#51392e}
+.cargo-wheel b{background:#fbe2a0;border-radius:50%;width:11px;height:11px;text-align:center;font-size:8px}
+.cargo[data-ready="true"] .cargo-wheel{animation:wheel-turn 9s linear infinite}
+.cargo small{display:block;font:800 10px ui-monospace,monospace;color:#5c5d42}
+@keyframes wheel-turn{to{transform:rotate(1turn)}}
+.valley-row{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin:9px 0;color:#315242}
+.valley-row span{font:800 12px ui-monospace,monospace}
+.valley-row button{min-height:35px}
+.mobile-quest{display:none}
+.chest-head{display:grid;justify-items:center;gap:5px;text-align:center;padding:17px;background:#224b3c;color:#ffedb1}
+.chest-art{position:relative;width:65px;height:49px;background:#8e5636;border:3px solid #392c25;border-radius:9px 9px 4px 4px;box-shadow:0 0 22px #f6c85c83;display:grid;place-items:center;color:#ffe799;font-size:24px}
+.chest-art:before,.chest-art:after{content:"";position:absolute;inset:3px auto 0;left:7px;width:4px;background:#e2aa4c}.chest-art:after{left:auto;right:7px}
+.chest-lines{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.chest-lines p{background:#fff7de;border:1px solid var(--line);padding:6px;border-radius:4px}
+#reportCollect{width:100%;min-height:45px}
+.confetti{position:fixed;z-index:100;left:50%;top:45%;width:8px;height:8px;pointer-events:none;background:var(--tone);animation:scatter .9s ease-out forwards}
+@keyframes scatter{to{transform:translate(var(--x),var(--y)) rotate(var(--turn));opacity:0}}
+@media(max-width:760px){
+  html{scroll-padding-bottom:calc(83px + env(safe-area-inset-bottom))}
+  main{max-width:100%;min-height:100dvh;padding:calc(8px + env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) calc(98px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}
+  button{min-height:42px;touch-action:manipulation}
+  .top{min-height:45px;margin-bottom:6px}
+  .scene canvas{height:clamp(140px,38vw,225px)}
+  #tabs{position:fixed;z-index:7;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;padding:6px max(4px,env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(4px,env(safe-area-inset-left));border:0;border-top:2px solid #a98760;box-shadow:0 -4px #664c3122}
+  #tabs button{display:grid;place-content:center;gap:2px;white-space:nowrap;padding:4px 1px;min-height:50px;font-size:clamp(8px,2.5vw,12px)}
+  #tabs button span{font-size:17px}
+  .workspace{gap:8px}.quests{grid-row:auto}
+  .panel-inner{padding:8px}
+  .mobile-quest{display:block;min-height:36px;margin:0 0 8px}
+  #list{gap:6px}
+  .stats{margin-top:13px;gap:5px}
+  #notice{min-height:28px}
+  #settingsOpen,#sound{line-height:1}
+  .cargo{top:6px;right:6px;min-height:37px;padding:4px 6px;font-size:11px}
+  .cargo-wheel{width:21px;height:21px}
+  .cargo small{font-size:9px}
+}
+@media(max-width:375px){.valley-row button{width:100%}}
+@media(prefers-reduced-motion:reduce){.cargo-wheel,.confetti{animation:none!important}.confetti{display:none}}
+
+
+.stage{position:relative}
+#buildingSigns{position:absolute;inset:0;pointer-events:none;z-index:1}
+.wood-sign{position:absolute;left:var(--x);top:var(--y);transform:translate(-50%,-100%);pointer-events:auto;display:flex;align-items:center;justify-content:center;gap:4px;min-height:26px;max-width:22%;padding:3px 7px;color:#fff3c7;background:repeating-linear-gradient(0deg,#714729 0 4px,#7d502e 4px 5px,#764a2b 5px 8px);border:2px solid #4b3328;border-radius:4px;box-shadow:inset 0 0 0 1px #c59762,0 2px #332918aa;font:850 clamp(8px,1.16vw,13px)/1.05 ui-monospace,Consolas,monospace;text-align:center;text-shadow:0 1px #3b271c;white-space:nowrap;touch-action:manipulation}
+.wood-sign:after{content:"";position:absolute;width:3px;height:5px;top:100%;left:calc(50% - 1px);background:#9a6b42;border:1px solid #69472e;pointer-events:none}
+.wood-sign:hover,.wood-sign:focus-visible,.wood-sign.is-lit{color:#fff8dd;border-color:#deb567;box-shadow:0 0 11px #ffd77faa,inset 0 0 0 1px #e7b776}
+.wood-sign:not(:disabled):active{transform:translate(-50%,-98%);box-shadow:0 0 7px #ffd77faa}
+.scene-heart{position:absolute;left:var(--heart-x);top:var(--heart-y);z-index:3;pointer-events:none;font-size:clamp(16px,3vw,28px);line-height:1;filter:drop-shadow(0 1px 2px #b35550);animation:love-rise .94s ease-out forwards}
+@keyframes love-rise{0%{opacity:0;transform:translate(-50%,0) scale(.55)}25%{opacity:1;transform:translate(-50%,-9px) scale(1.22)}100%{opacity:0;transform:translate(-50%,-45px) scale(.94)}}
+#sceneDetail{width:min(490px,calc(100% - 24px))}
+#sceneDetailBody{display:grid;gap:10px}
+#sceneDetail .settings-content{max-height:min(70vh,570px);overflow:auto;overscroll-behavior:contain}
+.detail-hero{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.detail-metric{padding:9px;background:#fff6db;border:1px solid var(--line);border-radius:4px}
+.detail-metric strong{display:block;font:900 21px/1.2 ui-monospace,Consolas,monospace;color:#275439;overflow-wrap:anywhere}
+.detail-metric small,.detail-note{font-size:12px;color:#4b624c}
+.detail-list{display:grid;gap:3px;margin:0;padding:0;list-style:none}
+.detail-list li{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #dbca9f;padding:5px 0;font-size:13px}
+.detail-list b{white-space:nowrap}
+.detail-actions{display:flex;gap:7px;flex-wrap:wrap}
+.detail-actions button{min-height:37px}
+.detail-status{padding:8px;border-left:4px solid #8c9c57;background:#e7edc7;font-size:13px}
+.detail-status.warn{border-color:#ba8350;background:#fae4bb}
+.detail-portrait{display:flex;align-items:center;gap:10px;font-size:12px}
+.detail-portrait svg{width:65px;height:48px;shape-rendering:crispEdges}
+.detail-status-line{min-height:17px;color:#28553d;font-size:12px}
+@media(max-width:760px){
+  .stage canvas{height:clamp(216px,56vw,295px)}
+  .wood-sign{top:var(--mobile-y,var(--y));min-height:27px;max-width:21%;padding:2px 4px;gap:2px;white-space:normal;font-size:clamp(8px,2.5vw,11px)}
+  .wood-sign .sign-icon{display:none}
+}
+@media(prefers-reduced-motion:reduce){.scene-heart{animation:none}}
+
+.calendar-bar{display:flex;gap:7px 14px;flex-wrap:wrap;justify-content:space-between;align-items:center;margin:4px 0 9px;padding:8px 11px;border:1px solid #bfa678;border-radius:5px;background:#fff3cf;color:#264f3a;font:850 clamp(10px,2.1vw,15px)/1.25 ui-monospace,Consolas,monospace}
+.calendar-bar time{color:#735331}
+.auction-panel{grid-column:1/-1;display:grid;gap:8px;padding:10px;background:#fff4ce;border:1px solid #ba9b60;border-left:4px solid #c9943c;border-radius:5px}
+.auction-panel h3{margin:0;font-size:15px}.auction-panel p{font-size:13px;margin:0}.auction-controls{display:flex;flex-wrap:wrap;gap:6px}.auction-panel small{font-size:12px;color:#586046}
+.warn-tag{position:absolute;left:var(--x);top:57%;transform:translateX(-50%);z-index:2;pointer-events:none;border:1px solid #ae4e31;background:#ffda79;color:#672720;border-radius:4px;padding:3px 4px;white-space:nowrap;font:900 clamp(8px,1.4vw,11px)/1.2 ui-monospace,Consolas,monospace;animation:warn-pulse 1.2s ease-in-out infinite alternate}
+@keyframes warn-pulse{to{box-shadow:0 0 10px #ffca54;transform:translate(-50%,-3px)}}
+.quick-market{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.quick-market button{background:#efc358;color:#392618;border-color:#91622d}
+body.winter{background-color:#e9eddd}
+@media(max-width:760px){main{padding-bottom:calc(140px + env(safe-area-inset-bottom))}#tabs{grid-template-columns:repeat(5,minmax(0,1fr))}#tabs button{min-height:43px}#tabs button span{font-size:14px}.warn-tag{top:62%}}
+@media(prefers-reduced-motion:reduce){.warn-tag{animation:none}}
+
+#profileGate{width:min(460px,calc(100% - 24px));max-height:95dvh}
+#profileForm{display:grid;gap:10px}
+#profileForm label{font-weight:750}
+#profileForm input{font:inherit;width:100%;border:2px solid var(--line);border-radius:4px;padding:9px;background:#fff9df;color:var(--ink)}
+#profileForm .profile-buttons{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.profile-note{font-size:12px;color:#53604b}
+#profileError{min-height:16px;color:#873d30}
+#profileLabel{font-size:11px;color:#4b624c;text-align:right}
+#fullFarm{white-space:nowrap}
+.era-track{grid-column:1/-1;display:grid;gap:7px}
+.era-track progress{width:100%;height:9px}
+#deliveryStatus{font-weight:800;color:#28523f}
+.herd-count{position:absolute;left:var(--bx);top:var(--by);transform:translate(-50%,-100%);padding:1px 4px;color:#2b3626;background:#fffdf2;border:2px solid #cf9d39;border-radius:4px;box-shadow:0 1px #66471c;font:900 clamp(9px,1.32vw,14px)/1 ui-monospace,monospace;white-space:nowrap;pointer-events:none}
+#herdBadges{position:absolute;inset:0;pointer-events:none;z-index:1}
+@media(max-width:760px){#tabs button{min-height:39px}#profileLabel{display:none}#fullFarm{padding:6px}.top-actions{gap:4px}}
+@media(orientation:landscape) and (max-height:620px) and (pointer:coarse){
+  main{max-width:100%;height:100dvh;padding:4px;overflow:hidden}
+  .top{min-height:36px;margin:0}
+  .top-actions button{min-height:32px;padding:4px 6px}
+  .world-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px;height:calc(100dvh - 46px)}
+  .world-left,.world-right{min-width:0;overflow:auto;overscroll-behavior:contain}
+  .world-right #tabs{position:sticky;top:0;bottom:auto;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));z-index:6}
+  .world-right #tabs button{min-height:34px;padding:2px;font-size:10px}
+  .world-right .workspace{display:block}
+  .stage canvas{height:clamp(206px,55vh,245px)}
+  .world-left .cargo{top:5px;right:5px;min-height:31px;padding:3px 5px;font-size:10px}
+  .wood-sign{top:var(--mobile-y);min-height:26px;max-width:21%;padding:2px 4px;white-space:normal;font-size:9px}
+  .wood-sign .sign-icon{display:none}
+  .board-panel{margin-bottom:2px}
+  .calendar-bar{font-size:10px;padding:4px 6px;margin:4px 0}
+  .stats{grid-template-columns:repeat(2,1fr);margin:8px 0}
+  .mobile-quest{display:none}
+  .panel-inner{padding:6px}
+}
+
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <div class="brand"><span class="mark" aria-hidden="true">🌾</span><div><h1><button class="brand-name" id="renameOpen" type="button" title="Çiftlik adını değiştir" aria-haspopup="dialog">Bozkır Çiftliği</button></h1><p class="kicker" id="farmTitle">Köy Çırağı</p></div></div>
+    <div class="top-actions"><span id="profileLabel"></span><button id="fullFarm" type="button" title="Tam ekran" aria-label="Tam ekran">⛶</button><button id="sound" type="button" aria-pressed="false">🔇 Ses kapalı</button><button id="settingsOpen" type="button" aria-label="Ayarlar"><span aria-hidden="true">⚙</span> Ayarlar</button></div>
+  </header>
+  <div class="world-layout"><div class="world-left"><div class="calendar-bar" aria-label="Çiftlik takvimi">
+    <span id="calendarDay">📅 Gün 1 · Pazartesi</span><time id="calendarClock">Kalan: 60 sn</time><span id="calendarSeason">Mevsim: 🌱 İlkbahar</span>
+  </div>
+  <div class="scene">
+    <div class="stage" id="stage"><canvas id="farm" width="512" height="190" role="img" aria-label="Canlı çiftlik sahnesi. Bina tabelaları yönetimi açar. Hayvan seçmek için dokunabilir veya Hayvanı sev düğmesini kullanabilirsin.">Canlı çiftlik sahnesi</canvas>
+    <p class="scene-label" id="plot">Merada</p>
+    <button class="cargo" id="cargo" type="button" title="Bozkır Çarkıfeleği" disabled><span class="cargo-wheel" aria-hidden="true"><b>✦</b></span><span>Şans kargosu<small id="cargoStatus"></small></span></button>
+    <div id="buildingSigns" aria-label="Çiftlik binaları"></div><div id="herdBadges" aria-hidden="true"></div><div id="sceneWarnings"></div></div>
+    <div class="frame-strip"><span id="status">Bir sonraki hasat</span><div class="scene-tools"><button id="visitAnimal" type="button">♥ Hayvanı sev</button><div class="meter">
+      <progress id="progress" max="30" value="0" aria-label="Hasat döngüsü"></progress><b id="time">30 sn</b>
+    </div></div></div>
+  </div>
+  <div class="bulletin" id="bulletin" aria-label="Çiftlik haberleri"></div><p id="newsLive" role="status" style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)"></p>
+  <div class="stats">
+    <div class="stat"><span aria-hidden="true">💰</span><div><small>Akçe</small><strong id="coins"></strong></div></div>
+    <div class="stat"><span aria-hidden="true">⭐</span><div><small>Çiftlik seviyesi</small><strong id="level"></strong><div class="sub" id="xp"></div></div></div>
+    <div class="stat"><span aria-hidden="true">🌾</span><div><small>Yem silosu</small><strong id="silo"></strong></div></div>
+    <div class="stat"><span aria-hidden="true">📦</span><div><small>Ürün ambarı</small><strong id="barn"></strong><div class="sub" id="space"></div></div></div>
+  </div>
+  <div class="valley-row"><span id="horseshoes">🐎 0 Altın Nal</span><button id="valleyOpen" type="button" disabled>Yeni Vadi · Sv. 5</button></div>
+  <p id="deliveryStatus" aria-live="polite"></p>
+  <p id="notice" role="status">İlk yumurtan 15 saniye sonra hazır. Pazar sekmesinden satabilirsin.</p>
+  <button type="button" class="mobile-quest" id="jumpQuest">📜 Çiftlik Günlüğü</button>
+  </div><div class="world-right"><div class="workspace">
+    <section class="panel" aria-labelledby="heading">
+      <nav id="tabs" aria-label="Çiftlik bölümleri"></nav>
+      <div class="panel-inner">
+        <div class="panel-head"><h2 id="heading">Sürü</h2><div id="quantities" role="group" aria-label="Alım miktarı"></div></div>
+        <div id="quickFeed"></div><div id="list"></div>
+      </div>
+    </section>
+    <aside class="quests" aria-labelledby="questsTitle"><h2 id="questsTitle">📜 Çiftlik Günlüğü</h2><div id="questList"></div></aside>
+  </div>
+  <footer id="save">Otomatik yerel kayıt · En fazla 8 saat çevrimdışı üretim</footer></div></div>
+</main>
+<dialog id="settings" aria-labelledby="settingsTitle">
+  <div class="settings-head"><h2 id="settingsTitle">⚙ Ayarlar</h2><button id="settingsClose" type="button" aria-label="Ayarları kapat">✕</button></div>
+  <div class="settings-content">
+    <div class="settings-actions" id="settingsActions">
+      <button id="exportSave" type="button">⬇ Oyunu JSON Olarak Dışa Aktar (Yedekle)</button>
+      <button id="importSave" type="button">⬆ Yedek Yükle (İçe Aktar)</button>
+      <button id="profileSwitch" type="button">Çiftçi Değiştir</button>
+      <button id="resetSave" class="danger" type="button">Çiftliği Sıfırla (Yeni Oyun)</button>
+    </div>
+    <input type="file" id="backupFile" accept=".json,application/json" hidden>
+    <section class="confirm-box" id="confirmSave" hidden aria-labelledby="confirmMessage">
+      <p id="confirmMessage"></p>
+      <div><button id="cancelChange" type="button">Vazgeç</button><button id="applyChange" class="danger" type="button"></button></div>
+    </section>
+    <p id="settingsStatus" role="status"></p>
+  </div>
+</dialog>
+<dialog id="nameDialog" aria-labelledby="nameHeading">
+  <div class="settings-head"><h2 id="nameHeading">Çiftlik adı</h2></div>
+  <form class="settings-content" id="nameForm">
+    <label for="farmNameInput">Çiftliğinin adı</label>
+    <input id="farmNameInput" name="farmName" maxlength="36" required>
+    <div class="name-actions"><button id="nameCancel" type="button">Vazgeç</button><button class="primary" type="submit">Kaydet</button></div>
+  </form>
+</dialog>
+<dialog id="reportDialog" aria-labelledby="reportTitle">
+  <div class="chest-head"><span class="chest-art" aria-hidden="true">✦</span><h2 id="reportTitle">Çiftlik Raporu Sandığı</h2><p>Hoş geldin! Sen yokken çiftlik çalıştı.</p></div>
+  <div class="settings-content">
+    <p id="reportDuration"></p><div id="reportGoods" class="chest-lines"></div>
+    <label id="reportSaleLabel"><input type="checkbox" id="reportSell"> Köy siparişine küçük bir pay sat</label>
+    <p id="reportCash"></p>
+    <button class="primary" id="reportCollect" type="button">✨ Hepsini Topla</button>
+  </div>
+</dialog>
+<dialog id="valleyDialog" aria-labelledby="valleyTitle">
+  <div class="chest-head"><span aria-hidden="true">🐎</span><h2 id="valleyTitle">Yeni Vadiye Taşın</h2></div>
+  <div class="settings-content">
+    <p id="valleyEstimate"></p>
+    <p>Hayvanlar, yapılar, çalışanlar, stok, akçe, XP ve görevler yeni vadide baştan başlar. Çiftlik adın ve Altın Nalların seninle gelir.</p>
+    <div class="settings-actions"><button class="primary" id="valleyConfirm" type="button">Çiftliği Devret &amp; Yeni Vadiye Taşın</button><button id="valleyCancel" type="button" autofocus>Vazgeç</button></div>
+  </div>
+</dialog>
+<dialog id="sceneDetail" aria-labelledby="sceneDetailTitle">
+  <div class="settings-head">
+    <h2 id="sceneDetailTitle"></h2>
+    <button id="sceneDetailClose" type="button" aria-label="Detay kartını kapat">✕</button>
+  </div>
+  <div class="settings-content">
+    <div id="sceneDetailBody"></div>
+    <div class="detail-actions" id="sceneDetailActions"></div>
+    <p class="detail-status-line" id="sceneDetailStatus" role="status"></p>
+  </div>
+</dialog>
+<dialog id="profileGate" aria-labelledby="profileTitle">
+  <div class="chest-head"><span class="chest-art" aria-hidden="true">🌾</span><h2 id="profileTitle">Bozkır Çiftliği Muhtarlığı</h2><p>Çiftçi kaydı</p></div>
+  <form class="settings-content" id="profileForm">
+    <label for="profileName">Kullanıcı adı</label><input id="profileName" autocomplete="username" maxlength="24" required>
+    <label for="profilePassword">Şifre</label><input id="profilePassword" type="password" autocomplete="current-password" maxlength="100" required>
+    <div class="profile-buttons"><button class="primary" type="submit" value="login">Giriş Yap</button><button type="submit" value="register">Kayıt Ol</button></div>
+    <p class="profile-note">Bu tarayıcıya özel profil. En az 6 karakterlik, bu oyuna özel bir şifre kullan.</p>
+    <p id="profileError" role="status"></p>
+  </form>
+</dialog>
+<script type="application/json" id="config">
+{
+  "version": 1,
+  "cycleSeconds": 30,
+  "offlineSeconds": 28800,
+  "priceGrowth": 1.15,
+  "xpBase": 120,
+  "xpGrowth": 1.6,
+  "feeds": {
+    "grain": {"name":"Tahıl","price":1},
+    "silage": {"name":"Silaj","price":2},
+    "syrup": {"name":"Arı şurubu","price":3}
+  },
+  "products": {
+    "egg": {"name":"Yumurta","price":4},
+    "milk": {"name":"İnek sütü","price":8},
+    "goatMilk": {"name":"Keçi sütü","price":11},
+    "honey": {"name":"Bal","price":15},
+    "cheese": {"name":"Kaşar","price":45},
+    "butter": {"name":"Tereyağı","price":24},
+    "cake": {"name":"Ballı kek","price":84},
+    "goatCheese": {"name":"Keçi peyniri","price":62}
+  },
+  "animals": {
+    "manisa": {"name":"Manisa tavuğu","feed":"grain","product":"egg","yieldUnits":1,"feedUnits":1,"base":18,"level":1},
+    "mersin": {"name":"Mersin tavuğu","feed":"grain","product":"egg","yieldUnits":2,"feedUnits":2,"base":52,"level":1},
+    "zibrit": {"name":"Zibrit tavuğu","feed":"grain","product":"egg","yieldUnits":2,"feedUnits":1,"base":85,"level":2},
+    "denizli": {"name":"Denizli tavuğu","feed":"grain","product":"egg","yieldUnits":3,"feedUnits":2,"base":140,"level":2},
+    "endulus": {"name":"Endülüs tavuğu","feed":"grain","product":"egg","yieldUnits":4,"feedUnits":2,"base":250,"level":3},
+    "habes": {"name":"Habeş tavuğu","feed":"grain","product":"egg","yieldUnits":5,"feedUnits":2,"base":460,"level":4},
+    "anadolu": {"name":"Anadolu ineği","feed":"silage","product":"milk","yieldUnits":27,"feedUnits":6,"base":90,"level":2},
+    "simental": {"name":"Simental ineği","feed":"silage","product":"milk","yieldUnits":45,"feedUnits":9,"base":350,"level":3},
+    "angus": {"name":"Angus ineği","feed":"silage","product":"milk","yieldUnits":69,"feedUnits":12,"base":580,"level":4},
+    "jersey": {"name":"Jersey ineği","feed":"silage","product":"milk","yieldUnits":125,"feedUnits":16,"base":930,"level":5},
+    "holstein": {"name":"Holstein-Friz ineği","feed":"silage","product":"milk","yieldUnits":144,"feedUnits":20,"base":1500,"level":6},
+    "kafkas": {"name":"Kafkas arı kovanı","feed":"syrup","product":"honey","yieldUnits":65,"feedUnits":12,"base":240,"level":3},
+    "carniola": {"name":"Carniola arı kovanı","feed":"syrup","product":"honey","yieldUnits":112,"feedUnits":18,"base":820,"level":5},
+    "saanen": {"name":"Saanen keçisi","feed":"silage","product":"goatMilk","yieldUnits":26,"feedUnits":6,"base":1250,"level":6}
+  },
+  "buildings": {
+    "silo": {"name":"Yem silosu","baseCapacity":120,"capacityGrowth":2,"baseCost":100,"costGrowth":1.85,"maxLevel":12,"level":1},
+    "barn": {"name":"Ürün ambarı","baseCapacity":80,"capacityGrowth":2,"baseCost":120,"costGrowth":1.85,"maxLevel":12,"level":1},
+    "dairy": {"name":"Mandıra","baseCost":180,"level":2,"maxLevel":1},
+    "oven": {"name":"Fırın","baseCost":420,"level":3,"maxLevel":1},
+    "lab": {"name":"Islah istasyonu","baseCost":360,"level":3,"maxLevel":1}
+  },
+  "recipes": {
+    "cheese": {"building":"dairy","inputs":{"milk":4},"output":"cheese","units":1,"seconds":90},
+    "butter": {"building":"dairy","inputs":{"milk":2},"output":"butter","units":1,"seconds":30},
+    "goatCheese": {"building":"dairy","inputs":{"goatMilk":4},"output":"goatCheese","units":1,"seconds":100},
+    "cake": {"building":"oven","inputs":{"egg":3,"honey":2,"butter":1},"output":"cake","units":1,"seconds":120}
+  },
+  "research": {
+    "selection": {"name":"Damızlık seçimi","cost":300,"requires":[],"feed":"grain","extraYield":1,"feedSaving":0},
+    "ration": {"name":"Yemden yararlanma","cost":520,"requires":["selection"],"feed":"silage","extraYield":0,"feedSaving":1},
+    "queen": {"name":"Ana arı seçimi","cost":620,"requires":["selection"],"feed":"syrup","extraYield":1,"feedSaving":0},
+    "line": {"name":"Süt hattı seleksiyonu","cost":1300,"requires":["ration","queen"],"feed":"silage","extraYield":2,"feedSaving":0}
+  }
+}
+</script>
+<script type="application/json" id="initial">
+{
+  "version": 1,
+  "coins": 75,
+  "xp": 0,
+  "lastMs": 0,
+  "phase": 0,
+  "turn": 0,
+  "animals": {"manisa":1,"mersin":0,"zibrit":0,"denizli":0,"endulus":0,"habes":0,"anadolu":0,"simental":0,"angus":0,"jersey":0,"holstein":0,"kafkas":0,"carniola":0,"saanen":0},
+  "feed": {"grain":24,"silage":0,"syrup":0},
+  "stock": {"egg":0,"milk":0,"goatMilk":0,"honey":0,"cheese":0,"butter":0,"cake":0,"goatCheese":0},
+  "buildings": {"silo":1,"barn":1,"dairy":0,"oven":0,"lab":0},
+  "research": [],
+  "jobs": {}
+}
+</script>
+<script>
+"use strict";
+const C = JSON.parse(document.querySelector("#config").textContent);
+const initial = JSON.parse(document.querySelector("#initial").textContent);
+const entries = Object.entries;
+const industryBuildings={
+  iceFactory:{name:"Dondurma Fabrikası",minDay:365,baseCost:48000},
+  mixer:{name:"Otomatik Yem Karma Tesisi",minDay:450,baseCost:68000},
+  biogas:{name:"Biyogaz Enerji Ünitesi",minDay:650,baseCost:90000},
+  genetics:{name:"Genetik Islah Laboratuvarı",minDay:2000,baseCost:350000},
+  airport:{name:"Özel İhracat Kargo Uçağı",minDay:3300,baseCost:700000},
+  megaSilo:{name:"Mega Silo Kompleksi",minDay:5000,baseCost:1200000}
+};
+for(const [id,spec] of entries(industryBuildings)) {
+  C.buildings[id]={...spec,level:1,maxLevel:1};
+  initial.buildings[id]=0;
+}
+const goldBreed={name:"Altın Irk İneği",feed:"silage",product:"milk",yieldUnits:250,feedUnits:42,base:12000,level:1};
+C.animals.goldBreed=goldBreed;initial.animals.goldBreed=0;
+C.products.iceCream={name:"Bozkır Dondurması",price:315};initial.stock.iceCream=0;
+C.recipes.iceCream={building:"iceFactory",inputs:{milk:10,butter:2,honey:1},output:"iceCream",units:1,seconds:75};
+const ids = Object.keys(C.animals);
+const sum = obj => Object.values(obj).reduce((a,b) => a+b,0);
+const fresh = () => JSON.parse(JSON.stringify(initial));
+const cost = (base,growth,n) => Math.ceil(base * growth ** n);
+function level(s) {
+  return 1 + Math.floor(Math.log1p(s.xp * (C.xpGrowth-1) / C.xpBase) / Math.log(C.xpGrowth) + 1e-12);
+}
+function capacity(s,id) {
+  const b = C.buildings[id];
+  return Math.floor(b.baseCapacity * b.capacityGrowth ** (s.buildings[id]-1))*(id==="silo"&&s.buildings.megaSilo?8:1);
+}
+function reserved(s) {
+  return Object.values(s.jobs).reduce((n,j) => n + (j.yield ?? C.recipes[j.recipe].units),s.auction?.sale?.quantity||0);
+}
+function room(s) { return capacity(s,"barn") - sum(s.stock) - reserved(s); }
+function batch(s,a) {
+  let output=a.yieldUnits, feed=a.feedUnits;
+  for (const id of s.research) {
+    const r=C.research[id];
+    if (r.feed===a.feed) { output+=r.extraYield; feed-=r.feedSaving; }
+  }
+  return {output,feed:Math.max(1,feed)};
+}
+const DAY=60, WEEK=420, FRIDAY=240;
+const WEEKDAYS=["Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi","Pazar"];
+const SEASONS=["🌱 İlkbahar","☀️ Yaz","🍂 Sonbahar","❄️ Kış"];
+const BOTS=["Trakya Süt A.Ş.","Ağa İbrahim","Bereket Mandıra"];
+const LOT_PRODUCTS=["egg","milk","goatMilk","honey"];
+const durations={manisa:20,mersin:20,zibrit:20,denizli:20,endulus:20,habes:20,
+  saanen:30,anadolu:60,simental:60,angus:60,jersey:120,holstein:120,kafkas:180,carniola:180,goldBreed:120};
+const weekOf=t=>Math.floor(t/WEEK);
+const winter=s=>weekOf(s.farmTime||0)%4===3;
+const friday=s=>Math.floor((s.farmTime||0)%WEEK/DAY)===4;
+const auctionEnd=week=>week*WEEK+FRIDAY+DAY;
+function harvestClock(s) {
+  let id=null, seconds=Infinity;
+  const speed=harvestSpeed(s), boostLeft=speed===3?s.tractorUntil-s.farmTime:0;
+  for(const key of ids){
+    if(s.animals[key]<1)continue;
+    const remaining=durations[key]-s.breedPhase[key];
+    const wait=remaining<=3*boostLeft?Math.ceil(remaining/3):boostLeft+remaining-3*boostLeft;
+    if(wait<seconds){id=key;seconds=wait;}
+  }
+  return {id,seconds};
+}
+const cargoTimes={manisa:15,mersin:15,zibrit:15,denizli:15,endulus:15,habes:15,
+  anadolu:30,simental:35,angus:40,jersey:45,holstein:60,saanen:45,kafkas:45,carniola:50,goldBreed:60};
+const eraDay=s=>1+Math.floor(((s.legacySeconds||0)+s.farmTime)/DAY);
+function eraName(day) {
+  return day>=2000?"Mega Holding":day>=365?"Endüstriyel Agro":day>=14?"Mandıra & Tesis":"Köy";
+}
+const eraFloor={simental:14,angus:14,jersey:14,holstein:14,saanen:14,kafkas:14,carniola:14};
+function animalUnlocked(s,id) {
+  return level(s)>=C.animals[id].level&&(!eraFloor[id]||eraDay(s)>=eraFloor[id]||s.animals[id]>0);
+}
+function pendingAnimals(s,id) {
+  return (s.deliveries||[]).reduce((total,job)=>total+(job.id===id?job.costs.length:0),0);
+}
+function queueDelivery(s,id,costs) {
+  s.deliveries.push({id,costs,start:s.farmTime,arrive:s.farmTime+cargoTimes[id]});
+}
+function queuePackage(s,id,count,price) {
+  const split=Math.floor(price/count), extra=price%count;
+  queueDelivery(s,id,Array.from({length:count},(_,i)=>split+(i<extra?1:0)));
+}
+function receiveDeliveries(s) {
+  if(!s.deliveries?.some(d=>d.arrive<=s.farmTime))return;
+  const waiting=[];
+  for(const d of s.deliveries) {
+    if(d.arrive>s.farmTime){waiting.push(d);continue;}
+    if(!s.animals[d.id])s.breedPhase[d.id]=s.farmTime%durations[d.id];
+    (s.purchaseCosts[d.id]??=[]).push(...d.costs);
+    s.animals[d.id]+=d.costs.length;
+    s.lastDelivery="🚚 "+d.costs.length+" "+C.animals[d.id].name+" teslim edildi.";
+  }
+  s.deliveries=waiting;
+}
+function stageRequirements(s) {
+  const k=s.paceStage||0;
+  return {seconds:Math.ceil(420*1.6**k-1e-9),xp:Math.ceil(120*(1.6**(k+1)-1)/.6-1e-9),
+    wealth:200*2**k,source:100*2**k,elapsed:s.paceSince<0?0:(s.legacySeconds||0)+s.farmTime-s.paceSince};
+}
+function manageIndustry(s) {
+  receiveDeliveries(s);
+  const day=Math.floor(s.farmTime/DAY);
+  if(day<=s.industryDay)return;
+  s.industryDay=day;
+  if(s.buildings.biogas)credit(s,50+Math.min(2950,10*sum(s.animals)));
+  if(s.buildings.mixer){
+    const demand=feedDemand(s), feed=s.feed;
+    let free=Math.min(capacity(s,"silo")-sum(feed),60);
+    const types=Object.keys(feed).filter(k=>demand[k]>0);
+    while(free>0) {
+      let best=types[0];
+      for(const id of types)if(feed[id]/demand[id]<feed[best]/demand[best])best=id;
+      feed[best]++;free--;
+    }
+  }
+}
+function exportLot(s,id) {
+  const quantity=Math.min(100,s.stock[id]||0);
+  const {eventValue}=saleTerms(s,id,quantity);
+  return {quantity,value:boostedRevenue(s,Math.floor(eventValue*135/100))};
+}
+function unitCost(id,count) {
+  return cost(C.animals[id].base,C.priceGrowth,count);
+}
+function lastBasis(s,id) {
+  return s.purchaseCosts[id]?.at(-1)??unitCost(id,s.animals[id]-1);
+}
+function serviceDebt(s) {
+  const loan=s.loan;
+  if(!loan)return;
+  const payment=Math.min(s.coins,loan.due);
+  s.coins-=payment;loan.due-=payment;
+  if(loan.left===0&&loan.due===0)s.loan=null;
+}
+function runSupplier(s) {
+  if(s.supplier&&sum(s.feed)*10<capacity(s,"silo")&&s.coins>=C.feeds.grain.price)fillSilo(s);
+}
+function establishAuction(s) {
+  const week=weekOf(s.farmTime);
+  const pool=ids.filter(id=>id!=="goldBreed"&&animalUnlocked(s,id)&&s.animals[id]+pendingAnimals(s,id)<190);
+  const id=(pool.length?pool:["manisa"])[Math.floor(datedRandom(s.worldSeed,week,6727)*(pool.length||1))];
+  const quantity=3+Math.floor(datedRandom(s.worldSeed,week,7611)*3);
+  const basis=Array.from({length:quantity},(_,i)=>unitCost(id,s.animals[id]+pendingAnimals(s,id)+i)).reduce((a,b)=>a+b,0);
+  const limit=Math.max(1,Math.floor(basis*94/100)), start=Math.min(limit,Math.ceil(basis*69/100));
+  const firstBid=start+Math.max(1,Math.floor(basis*.018));
+  const botLimit=Math.min(limit,firstBid+Math.floor(Math.max(0,limit-firstBid)*datedRandom(s.worldSeed,week,442)));
+  s.auction={week,buy:{id,quantity,basis,limit,start,botLimit,bid:start,owner:BOTS[0],
+    held:0,next:0,turn:0},sale:null};
+}
+function auctionResult(s,message) {
+  s.lastAuction=message;
+}
+function releaseBid(s,buy) {
+  s.coins+=buy.held;buy.held=0;
+  serviceDebt(s);
+}
+function finishAuction(s) {
+  const a=s.auction, buy=a.buy;
+  if(buy.held>0) {
+    queuePackage(s,buy.id,buy.quantity,buy.held);
+    auctionResult(s,"İhale kazanıldı · "+buy.quantity+" "+C.animals[buy.id].name+" nakliyeye verildi.");
+  } else if(buy.turn)auctionResult(s,"Alım ihalesini "+buy.owner+" kazandı.");
+  if(a.sale) {
+    const {id,quantity,offer}=a.sale;
+    credit(s,offer);earnXp(s,quantity*C.products[id].price);s.firstSale=true;
+    const saleResult="Toptan satış tamamlandı · "+fmt(offer)+" akçe.";
+    s.lastAuction=buy.turn?(s.lastAuction+" "+saleResult):saleResult;
+  }
+  s.auction=null;
+}
+function processEconomy(s) {
+  manageIndustry(s);
+  if(s.loan?.left>0&&s.farmTime>=s.loan.next) {
+    s.loan.left--;s.loan.due+=160;s.loan.next+=DAY;
+    serviceDebt(s);
+  }
+  if(s.auction&&s.farmTime>=auctionEnd(s.auction.week))finishAuction(s);
+  if(friday(s)&&!s.auction)establishAuction(s);
+  const a=s.auction;
+  if(!a)return;
+  const b=a.buy;
+  if(b.next&&s.farmTime>=b.next){
+    b.next=0;
+    const counter=b.bid+Math.max(1,Math.floor(b.basis*.018));
+    if(counter<=b.botLimit){
+      releaseBid(s,b);
+      b.bid=counter;b.owner=BOTS[b.turn%BOTS.length];
+    }
+  }
+  const sale=a.sale;
+  if(sale?.next&&s.farmTime>=sale.next) {
+    sale.turn++;
+    const raise=Math.max(1,Math.ceil(sale.basis*(.025+datedRandom(s.worldSeed,a.week*20+sale.turn,707)*.047)));
+    sale.offer=Math.min(sale.limit,sale.offer+raise);
+    sale.owner=BOTS[sale.turn%BOTS.length];
+    sale.next=sale.offer<sale.limit?s.farmTime+4+sale.turn%3:0;
+  }
+}
+function nextEconomy(s) {
+  const times=[DAY-s.farmTime%DAY,...(s.deliveries||[]).map(d=>d.arrive-s.farmTime)];
+  if(s.loan?.left>0)times.push(s.loan.next-s.farmTime);
+  if(s.auction?.buy.next)times.push(s.auction.buy.next-s.farmTime);
+  if(s.auction?.sale?.next)times.push(s.auction.sale.next-s.farmTime);
+  return Math.min(...times);
+}
+function seasonPrice(s,id,round) {
+  const base=marketPrice(s,id,round);
+  return winter(s)?Math.round(base*125)/100:base;
+}
+function winterRevenue(s,amount) {
+  return winter(s)?Math.round(amount*125/100):amount;
+}
+function nextBid(b){
+  return b.turn===0?b.start:b.bid+Math.max(1,Math.floor(b.basis*.015));
+}
+function saleLot(s,id) {
+  const quantity=Math.min(s.stock[id],24);
+  const {eventValue}=saleTerms(s,id,quantity);
+  const basis=boostedRevenue(s,eventValue), min=Math.ceil(basis*106/100), limit=Math.floor(basis*131/100);
+  return {id,quantity,basis,offer:min,limit,owner:BOTS[0],turn:0,next:s.farmTime+3};
+}
+const workerSpecs={
+  shepherd:{name:"Çoban Çırağı",icon:"🌾",price:220,level:2,detail:"Her hasat öncesi tahıl 0 ise tarladan toplar. Yağmurda iki kat toplar."},
+  dairyman:{name:"Mandıra Ustası",icon:"🧈",price:480,level:3,detail:"Mandıra boşken 2 inek sütünü bir tereyağı partisine ayırır."}
+};
+const EVENT_FIRST=180, EVENT_PERIOD=240, EVENT_LENGTH=60;
+const RAIN_PERIOD=240, RAIN_LENGTH=55, PET_COOLDOWN=90;
+function datedRandom(seed,index,salt) {
+  let mixed=Math.imul((seed^salt^index)>>>0,0x45d9f3b);
+  mixed=Math.imul(mixed^(mixed>>>16),0x45d9f3b);
+  return ((mixed^(mixed>>>16))>>>0)/4294967296;
+}
+function weather(s) {
+  const cycle=Math.floor(s.farmTime/RAIN_PERIOD);
+  const at=s.farmTime%RAIN_PERIOD;
+  const start=44+Math.floor(datedRandom(s.worldSeed,cycle,17)*76);
+  const scheduled=cycle===0||datedRandom(s.worldSeed,cycle,79)<.67;
+  return scheduled&&at>=start&&at<start+RAIN_LENGTH?start+RAIN_LENGTH-at:0;
+}
+function townEvent(s) {
+  if(s.farmTime<EVENT_FIRST) return null;
+  const index=Math.floor((s.farmTime-EVENT_FIRST)/EVENT_PERIOD);
+  const start=EVENT_FIRST+index*EVENT_PERIOD+Math.floor(datedRandom(s.worldSeed,index,37)*51);
+  const remaining=start+EVENT_LENGTH-s.farmTime;
+  if(s.farmTime<start||remaining<=0) return null;
+  const firstFair=datedRandom(s.worldSeed,Math.floor(index/2),823)<.5;
+  return {index,remaining,kind:(index%2===0)===firstFair?"fair":"medal"};
+}
+function sowGrain(s) {
+  const free=capacity(s,"silo")-sum(s.feed);
+  const count=free>0?stockProduction(s,"grain",weather(s)?2:1,free):0;
+  s.feed.grain+=count;
+  return count;
+}
+const MARKET_ROUND=90, BASE_FARM_NAME="Bozkır Çiftliği";
+const rareProducts={
+  goldenEgg:{name:"Altın Yumurta",price:25},
+  jerseyCream:{name:"Kremalı Jersey Sütü",price:40}
+};
+Object.assign(C.products,rareProducts);
+for(const id of Object.keys(rareProducts))initial.stock[id]=0;
+function marketPrice(s,id,round=Math.floor((s.farmTime||0)/MARKET_ROUND)) {
+  const base=C.products[id].price;
+  if(Object.hasOwn(rareProducts,id))return base;
+  const index=Object.keys(C.products).indexOf(id);
+  const window=Math.floor(Math.max(0,round)/5);
+  // Her beş dönemin ortalaması taban fiyattır, sırası çiftliğe ve zamana göre değişir.
+  const style=Math.floor(datedRandom(s.worldSeed||0,window,761+index*131)*4);
+  const offset=style>=2?2:0, direction=style%2?-1:1;
+  const position=(offset+direction*(Math.max(0,round)%5)+5)%5;
+  const delta=Math.max(1,Math.round(base*.13));
+  return base+[0,-delta,0,2*delta,-delta][position];
+}
+function marketValue(s,id,base) {
+  const event=townEvent(s);
+  return event?.kind==="fair"&&["egg","milk","goatMilk"].includes(id)?Math.floor(base*1.5):base;
+}
+function rareHarvest(s,space,poultry,jersey,report) {
+  const candidates=[["goldenEgg",poultry,2327],["jerseyCream",jersey,8149]];
+  for(const [id,eligible,salt] of candidates) {
+    if(space<=0)break;
+    if(!eligible||datedRandom(s.worldSeed||0,s.farmTime,salt)>=.05)continue;
+    const count=stockProduction(s,id,1,space);
+    s.stock[id]=(s.stock[id]||0)+count;
+    if(report)report.made[id]=(report.made[id]||0)+count;
+    space-=count;
+  }
+}
+const CARGO_INTERVAL=1200, TRACTOR_TIME=120;
+const OFFLINE_REPORT_MIN=60;
+const prestigePercent=s=>5*(s.nals||0);
+const harvestSpeed=s=>s.farmTime<(s.tractorUntil||0)?3:1;
+const nalAward=s=>Math.max(1,Math.floor(Math.sqrt((s.wealth||0)/1200)));
+function credit(s,amount) {
+  const paid=Math.min(amount,Number.MAX_SAFE_INTEGER-s.coins);
+  s.coins+=paid;
+  s.wealth=Math.min(Number.MAX_SAFE_INTEGER,(s.wealth||0)+paid);
+  s.lifetimeWealth=Math.min(Number.MAX_SAFE_INTEGER,(s.lifetimeWealth||0)+paid);
+  if(s.paceSince===-1&&s.lifetimeWealth>=100)s.paceSince=(s.legacySeconds||0)+s.farmTime;
+  serviceDebt(s);
+}
+function earnXp(s,amount) {s.xp+=amount;s.lifetimeXp=(s.lifetimeXp||0)+amount;}
+function boostedRevenue(s,price,commit=false) {
+  if(!price)return 0;
+  const bonus=price*(prestigePercent(s)/5)+(s.saleCarry||0);
+  if(commit)s.saleCarry=bonus%20;
+  return Math.min(Number.MAX_SAFE_INTEGER,price+Math.floor(bonus/20));
+}
+function productionQuote(s,id,base) {
+  if(!base)return {units:0,carry:s.outputCarry?.[id]||0};
+  const scaled=base*(prestigePercent(s)/5)+(s.outputCarry?.[id]||0);
+  return {units:base+Math.floor(scaled/20),carry:scaled%20};
+}
+function stockProduction(s,id,base,space) {
+  const result=productionQuote(s,id,base);
+  (s.outputCarry??={})[id]=result.carry;
+  return Math.min(space,result.units);
+}
+function herdFit(s,id,count,capacity,unitSize) {
+  let lo=0, hi=count;
+  while(lo<hi) {
+    const mid=Math.ceil((lo+hi)/2);
+    if(productionQuote(s,id,mid*unitSize).units<=capacity)lo=mid;
+    else hi=mid-1;
+  }
+  if(lo===0&&count>0&&capacity>=unitSize)return 1;
+  return lo;
+}
+function openCargo(s) {
+  if(s.farmTime<s.cargoReady)return null;
+  const roll=datedRandom(s.worldSeed,s.cargoCount,4703);
+  s.cargoCount++;
+  s.cargoReady=s.farmTime+CARGO_INTERVAL;
+  if(roll<.34) {
+    s.tractorUntil=s.farmTime+TRACTOR_TIME;
+    return "🚜 Altın Traktör · 2 dakika boyunca 3 kat hızlı hasat!";
+  }
+  if(roll<.75) {
+    const rates=feedDemand(s), feed=s.feed;
+    let left=capacity(s,"silo")-sum(feed);
+    const added=left, active=Object.keys(rates).filter(id=>rates[id]>0);
+    while(left>0) {
+      let best=active[0];
+      for(const id of active)if(feed[id]/rates[id]<feed[best]/rates[best])best=id;
+      feed[best]++;left--;
+    }
+    return "🌾 Bereket Dalgası · "+fmt(added)+" ücretsiz rasyon, yem silosu dolu.";
+  }
+  const prize=200+150*level(s);
+  credit(s,prize);
+  return "🏆 Büyük İkramiye · +"+fmt(prize)+" akçe!";
+}
+function newValley(s) {
+  const next=questState(fresh());
+  next.farmName=s.farmName;
+  next.nals=(s.nals||0)+nalAward(s);
+  next.valleys=(s.valleys||0)+1;
+  next.legacySeconds=(s.legacySeconds||0)+s.farmTime;
+  next.paceStage=s.paceStage;next.paceSince=s.paceSince;next.lifetimeWealth=s.lifetimeWealth;next.lifetimeXp=s.lifetimeXp;
+  next.lastMs=Date.now();
+  return next;
+}
+function runDairy(s) {
+  if(s.workers?.dairyman!==2) return;
+  quote(s,"craft","butter").run?.();
+}
+
+function harvest(s,report,due=ids) {
+  if(s.workers?.shepherd===2&&s.feed.grain===0&&due.some(id=>C.animals[id].feed==="grain"&&s.animals[id]>0))
+    sowGrain(s);
+  let space=room(s), poultry=false, jersey=false;
+  for (let i=0;i<ids.length;i++) {
+    const id=ids[(s.turn+i)%ids.length], a=C.animals[id];
+    if(!s.animals[id]||!due.includes(id))continue;
+    const b=batch(s,a);
+    const eligible=Math.min(s.animals[id],Math.floor(space/b.output),Math.floor(s.feed[a.feed]/b.feed));
+    const count=herdFit(s,a.product,eligible,space,b.output);
+    const output=stockProduction(s,a.product,count*b.output,space), eaten=count*b.feed;
+    s.stock[a.product]+=output;
+    s.feed[a.feed]-=eaten;
+    if(report){
+      report.made[a.product]=(report.made[a.product]||0)+output;
+      report.eaten+=eaten;
+      if(report.herd) {
+        const prior=report.herd[id]||{count:0,output:0};
+        report.herd[id]={count:prior.count+count,output:prior.output+output};
+      }
+    }
+    space-=output;
+    if(count>0&&a.feed==="grain")poultry=true;
+    if(count>0&&id==="jersey")jersey=true;
+  }
+  rareHarvest(s,space,poultry,jersey,report);
+  s.turn=(s.turn+1)%ids.length;
+}
+function advance(s,seconds,report) {
+  if(seconds<=0)return;
+  s.farmTime??=0;
+  s.breedPhase??=Object.fromEntries(ids.map(id=>[id,s.farmTime%durations[id]]));
+  processEconomy(s);
+  runSupplier(s);
+  runDairy(s);
+  let left=seconds;
+  while(left>0) {
+    const jobs=entries(s.jobs), owned=ids.filter(id=>s.animals[id]>0), speed=harvestSpeed(s);
+    const boostEnd=speed===3?s.tractorUntil-s.farmTime:Infinity;
+    const parity=owned.map(id=>Math.ceil((durations[id]-s.breedPhase[id])/speed));
+    const step=Math.min(left,boostEnd,...parity,nextEconomy(s),...jobs.map(([,j])=>j.left));
+    s.farmTime+=step;left-=step;
+    s.phase=(s.phase+step*speed)%C.cycleSeconds;
+    const due=[];
+    for(const id of owned) {
+      s.breedPhase[id]+=step*speed;
+      if(s.breedPhase[id]>=durations[id]) {
+        s.breedPhase[id]-=durations[id];
+        due.push(id);
+      }
+    }
+    processEconomy(s);
+    for(const [building,j] of jobs) {
+      j.left-=step;
+      if(j.left!==0)continue;
+      const r=C.recipes[j.recipe], quantity=j.yield??r.units;
+      s.stock[r.output]+=quantity;delete s.jobs[building];
+      if(report)report.made[r.output]=(report.made[r.output]||0)+quantity;
+    }
+    runSupplier(s);
+    if(due.length)harvest(s,report,due);
+    if(speed===3&&harvestSpeed(s)===1)
+      for(const id of ids)s.breedPhase[id]=s.farmTime%durations[id];
+    runSupplier(s);
+    runDairy(s);
+  }
+}
+function settle(s,now,report) {
+  if (s.lastMs===0) { s.lastMs=now;processEconomy(s);return 0; }
+  const elapsed=Math.max(0,Math.floor((now-s.lastMs)/1000));
+  const credited=Math.min(elapsed,C.offlineSeconds);
+  if(credited)advance(s,credited,report);
+  else processEconomy(s);
+  s.lastMs+=elapsed*1000;
+  return credited;
+}
+const LEGACY_KEY="bozkir-ciftligi-v1", SOUND_KEY=LEGACY_KEY+"-sound", $=id=>document.getElementById(id);
+let KEY=LEGACY_KEY;
+const fmt=n=>n.toLocaleString("tr-TR");
+const tabs={"Sürü":"🐔","Yemlik":"🌾","Pazar":"💰","Yapılar":"🏗️","Atölye":"🧀","Islah":"🧬","Çalışanlar":"👩‍🌾","Hayvanlarım":"🐮","İhaleler":"⚖️","Çağlar":"🏭"};
+const amounts=[1,5,10,Infinity], choice={"Sürü":1,"Yemlik":1};
+const productIcon={egg:"🥚",milk:"🥛",goatMilk:"🥛",honey:"🍯",cheese:"🧀",butter:"🧈",cake:"🍰",goatCheese:"🧀",goldenEgg:"🥚",jerseyCream:"🥛",iceCream:"🍨"};
+const feedIcon={grain:"🌾",silage:"🌿",syrup:"🍯"};
+const buildingIcon={silo:"🌾",barn:"📦",dairy:"🥛",oven:"🔥",lab:"🧬"};
+const animalIcon=a=>a.feed==="grain"?"🐔":a.feed==="syrup"?"🐝":a.product==="goatMilk"?"🐐":"🐄";
+const chickens=s=>ids.reduce((n,id)=>n+(C.animals[id].feed==="grain"?s.animals[id]:0),0);
+const quests={
+  flock:{title:"3 tavuk sahibi ol",icon:"🐔",coins:30,xp:20,award:"30 Akçe + 20 XP",done:s=>chickens(s)>=3,progress:s=>Math.min(3,chickens(s))+" / 3 tavuk"},
+  sale:{title:"İlk ürününü pazarda sat",icon:"🧺",coins:50,xp:0,award:"50 Akçe",done:s=>s.firstSale,progress:s=>s.firstSale?"İlk satış yapıldı":"Pazardan bir ürün sat"},
+  dairy:{title:"Mandırayı inşa et",icon:"🥛",coins:100,xp:0,award:"100 Akçe + Kaşar Tarifi",done:s=>s.buildings.dairy>0,progress:s=>s.buildings.dairy?"Mandıra kuruldu":"Yapılar · Sv. 2"}
+};
+
+function valid(v) {
+  const nat=n=>Number.isSafeInteger(n)&&n>=0;
+  const counts=(o,keys,added={})=>o&&typeof o==="object"&&!Array.isArray(o)&&
+    Object.keys(o).every(k=>Object.hasOwn(keys,k)&&nat(o[k]))&&
+    Object.keys(keys).every(k=>nat(o[k])||Object.hasOwn(added,k)&&!Object.hasOwn(o,k));
+  const validStock=o=>o&&typeof o==="object"&&!Array.isArray(o)&&
+    Object.keys(o).every(k=>Object.hasOwn(C.products,k)&&nat(o[k]))&&
+    Object.keys(C.products).every(k=>nat(o[k])||((Object.hasOwn(rareProducts,k)||k==="iceCream")&&!Object.hasOwn(o,k)));
+  return v && v.version===C.version && [v.coins,v.xp,v.lastMs,v.phase,v.turn].every(nat) &&
+    validExtensions(v) && v.phase<C.cycleSeconds && v.turn<ids.length && counts(v.feed,C.feeds) &&
+    validStock(v.stock) && counts(v.animals,C.animals,{goldBreed:0}) && v.animals.manisa>=1 &&
+    counts(v.buildings,C.buildings,industryBuildings) && v.buildings.silo>=1 && v.buildings.barn>=1 &&
+    entries(v.buildings).every(([k,n])=>n<=C.buildings[k].maxLevel) &&
+    Array.isArray(v.research) && new Set(v.research).size===v.research.length &&
+    v.research.every(k=>Object.hasOwn(C.research,k)) && v.jobs && typeof v.jobs==="object" && !Array.isArray(v.jobs) &&
+    entries(v.jobs).every(([k,j])=>j && Object.hasOwn(C.recipes,j.recipe) &&
+      C.recipes[j.recipe].building===k && v.buildings[k]>0 && nat(j.left) && j.left>0 &&
+      j.left<=C.recipes[j.recipe].seconds &&
+      (!Object.hasOwn(j,"yield")||(nat(j.yield)&&j.yield>=C.recipes[j.recipe].units))) && room(v)>=0 && sum(v.feed)<=capacity(v,"silo");
+}
+
+function questState(v) {
+  // Önceki sürümde XP yalnızca satıştan geliyordu.
+  v.firstSale=typeof v.firstSale==="boolean"?v.firstSale:v.xp>0;
+  v.legacyCheese=typeof v.legacyCheese==="boolean"?v.legacyCheese:!Array.isArray(v.claimed)&&v.buildings.dairy>0;
+  v.claimed=Array.isArray(v.claimed)?[...new Set(v.claimed.filter(k=>Object.hasOwn(quests,k)))]:[];
+  v.farmTime ??= 0;
+  v.worldSeed ??= Math.random()*0x100000000>>>0;
+  v.petReady ??= 0;
+  v.lastMedal ??= -1;
+  v.workers ??= {shepherd:0,dairyman:0};
+  v.farmName ??= BASE_FARM_NAME;
+  for(const id of Object.keys(rareProducts))v.stock[id]??=0;
+  v.nals??=0;v.valleys??=0;v.saleCarry??=0;
+  v.wealth??=(v.farmTime||v.xp)?Math.max(v.coins,v.xp):0;
+  v.outputCarry??={};
+  v.tractorUntil??=0;v.cargoReady??=120;v.cargoCount??=0;
+  v.offlineChest??=null;
+  for(const id of Object.keys(industryBuildings))v.buildings[id]??=0;
+  v.stock.iceCream??=0;v.animals.goldBreed??=0;
+  if(!v.calendarAligned||!v.breedPhase)v.breedPhase=Object.fromEntries(ids.map(id=>[id,v.farmTime%durations[id]]));
+  v.calendarAligned=true;v.deliveries??=[];v.lastDelivery??="";
+  v.legacySeconds??=0;v.lifetimeWealth??=v.wealth;v.lifetimeXp??=v.xp;
+  v.paceStage??=0;v.paceSince??=v.lifetimeWealth>=100?v.legacySeconds+v.farmTime:-1;
+  v.industryDay??=Math.floor(v.farmTime/DAY);v.nextExport??=0;
+  v.purchaseCosts??={};v.supplier??=false;v.loan??=null;
+  v.auction??=null;v.lastAuction??="";
+  return v;
+}
+function validExtensions(v) {
+  const nat=n=>Number.isSafeInteger(n)&&n>=0;
+  const optional=(key,test)=>!Object.hasOwn(v,key)||test(v[key]);
+  const keys=Object.keys(workerSpecs);
+  const carryIds={...C.products,...C.feeds};
+  const chest=x=>x===null||(x&&nat(x.seconds)&&nat(x.eaten)&&x.made&&
+    Object.keys(x.made).every(k=>Object.hasOwn(C.products,k)&&nat(x.made[k])));
+  const validAuction=a=>{
+    if(a===null)return true;
+    if(!a||!nat(a.week)||a.week!==weekOf(v.farmTime||0)||!friday(v))return false;
+    const buy=a.buy, sale=a.sale, bot=x=>BOTS.includes(x);
+    if(!buy||!Object.hasOwn(C.animals,buy.id)||![buy.quantity,buy.basis,buy.limit,buy.start,buy.botLimit,
+        buy.bid,buy.held,buy.next,buy.turn].every(nat)||buy.quantity<3||buy.quantity>5||
+        buy.limit!==Math.floor(buy.basis*94/100)||buy.start!==Math.min(buy.limit,Math.ceil(buy.basis*69/100))||
+        buy.bid<buy.start||buy.bid>buy.limit||buy.botLimit<buy.start||buy.botLimit>buy.limit||
+        buy.held!==(buy.owner==="Sen"?buy.bid:0)||!(buy.owner==="Sen"||bot(buy.owner)))return false;
+    return sale===null||Boolean(sale&&LOT_PRODUCTS.includes(sale.id)&&
+      [sale.quantity,sale.basis,sale.offer,sale.limit,sale.turn,sale.next].every(nat)&&
+      sale.quantity>=5&&sale.quantity<=24&&sale.offer>=Math.ceil(sale.basis*106/100)&&
+      sale.offer<=sale.limit&&sale.limit===Math.floor(sale.basis*131/100)&&bot(sale.owner));
+  };
+  const validLoan=l=>l===null||Boolean(l&&[l.left,l.due,l.next].every(nat)&&l.left<=7&&l.due<=1120&&
+    (l.left===0||l.next>(v.farmTime||0))&&(l.left>0||l.due>0));
+  const oldDurations={manisa:15,mersin:16,zibrit:16,denizli:18,endulus:19,habes:20,saanen:35,
+    anadolu:45,simental:50,angus:55,jersey:55,holstein:60,kafkas:80,carniola:80};
+  const validateClock=o=>o&&Object.keys(o).every(id=>Object.hasOwn(C.animals,id))&&
+    (v.calendarAligned?ids.every(id=>nat(o[id])&&o[id]<durations[id]):
+      Object.keys(oldDurations).every(id=>nat(o[id])&&o[id]<oldDurations[id]));
+  const transit=ds=>Array.isArray(ds)&&ds.length<=3000&&ds.every(d=>d&&Object.hasOwn(C.animals,d.id)&&
+    Array.isArray(d.costs)&&d.costs.length>=1&&d.costs.length<=250&&d.costs.every(nat)&&
+    nat(d.start)&&nat(d.arrive)&&d.start<=(v.farmTime||0)&&d.arrive>(v.farmTime||0)&&d.arrive-d.start===cargoTimes[d.id]);
+  return optional("calendarAligned",x=>x===true)&&optional("breedPhase",validateClock)&&
+    optional("deliveries",transit)&&optional("lastDelivery",x=>typeof x==="string"&&x.length<=100)&&
+    optional("legacySeconds",n=>nat(n)&&n<1e13)&&optional("lifetimeWealth",nat)&&optional("lifetimeXp",nat)&&
+    optional("paceStage",n=>nat(n)&&n<=40)&&optional("paceSince",n=>n===-1||nat(n)&&n<=(v.farmTime||0)+(v.legacySeconds||0))&&
+    optional("industryDay",n=>nat(n)&&n<=Math.floor((v.farmTime||0)/DAY))&&
+    optional("nextExport",n=>nat(n)&&n<=(v.farmTime||0)+120) &&
+    optional("purchaseCosts",o=>o&&typeof o==="object"&&!Array.isArray(o)&&entries(o).every(([id,list])=>
+      Object.hasOwn(C.animals,id)&&Array.isArray(list)&&list.length<250&&list.every(nat)&&list.length<=v.animals?.[id])) &&
+    optional("supplier",x=>typeof x==="boolean")&&optional("loan",validLoan)&&
+    optional("auction",validAuction)&&optional("lastAuction",x=>typeof x==="string"&&x.length<=240) &&
+    optional("nals",n=>nat(n)&&n<=1000000) && optional("valleys",nat) &&
+    optional("wealth",nat) && optional("saleCarry",n=>nat(n)&&n<20) && optional("tractorUntil",n=>nat(n)&&n<=(v.farmTime||0)+TRACTOR_TIME) &&
+    optional("cargoReady",n=>nat(n)&&n<=(v.farmTime||0)+CARGO_INTERVAL) && optional("cargoCount",nat) &&
+    optional("outputCarry",o=>o&&typeof o==="object"&&!Array.isArray(o)&&
+      entries(o).every(([k,n])=>Object.hasOwn(carryIds,k)&&nat(n)&&n<20)) &&
+    optional("offlineChest",chest) && optional("farmName",n=>typeof n==="string"&&n.trim().length>0&&n.length<=36&&!/[\u0000-\u001f\u007f]/.test(n)) &&
+    optional("firstSale",x=>typeof x==="boolean") &&
+    optional("legacyCheese",x=>typeof x==="boolean") &&
+    optional("claimed",a=>Array.isArray(a)&&new Set(a).size===a.length&&a.every(k=>Object.hasOwn(quests,k))) &&
+    optional("farmTime",n=>nat(n)&&n<1e12) && optional("worldSeed",n=>nat(n)&&n<=0xffffffff) &&
+    optional("petReady",n=>nat(n)&&n<=(v.farmTime||0)+PET_COOLDOWN) &&
+    optional("lastMedal",n=>Number.isSafeInteger(n)&&n>=-1&&n<=Math.floor((v.farmTime||0)/EVENT_PERIOD)) &&
+    optional("workers",w=>w&&typeof w==="object"&&Object.keys(w).length===keys.length&&keys.every(k=>[0,1,2].includes(w[k])));
+}
+function bundleQuote(s,a,limit) {
+  let n=0,total=0;
+  while(n<limit) {
+    const next=cost(a.base,C.priceGrowth,s.animals[a.id]+pendingAnimals(s,a.id)+n);
+    if(next>s.coins-total) break;
+    total+=next; n++;
+  }
+  return {n,total};
+}
+function feedDemand(s) {
+  const rates={grain:0,silage:0,syrup:0};
+  for(const id of ids) {
+    const a=C.animals[id];
+    rates[a.feed]+=s.animals[id]*batch(s,a).feed*DAY/durations[id];
+  }
+  return rates;
+}
+function fillSilo(s) {
+  const feed={...s.feed}, demand=feedDemand(s), types=Object.keys(feed).filter(k=>demand[k]>0);
+  let left=capacity(s,"silo")-sum(feed), coins=s.coins;
+  // Her ek rasyonu, en az hasat süresi kalmış yem türüne ver.
+  while(left>0) {
+    let best=null;
+    for(const id of types) {
+      if(C.feeds[id].price>coins) continue;
+      if(best===null || feed[id]/demand[id]<feed[best]/demand[best]) best=id;
+    }
+    if(best===null) break;
+    feed[best]++; coins-=C.feeds[best].price; left--;
+  }
+  const bought=sum(feed)-sum(s.feed);
+  s.feed=feed; s.coins=coins;
+  return bought+" rasyon eklendi"+(left?" · Bakiye yalnızca bu miktara yetti.":". Silo doldu.");
+}
+function quote(s,action,id) {
+  function buy(price,label,apply) {
+    return s.coins<price?{why:"Gerekli akçe: "+fmt(price),label}:
+      {label,run:()=>{s.coins-=price;return apply();}};
+  }
+  if(action==="animal") {
+    const a=C.animals[id];
+    if(id==="goldBreed")return {why:"Genetik laboratuvarında melezle",label:"🧬 Melezle"};
+    if(!animalUnlocked(s,id))return {why:"Irkın seviye ve çağ koşulları var",label:eraFloor[id]&&eraDay(s)<eraFloor[id]?"🔒 Gün "+eraFloor[id]:"🔒 Sv. "+a.level};
+    const limit=choice["Sürü"], q=bundleQuote(s,{...a,id},limit);
+    const wanted=limit===Infinity?q.n:limit;
+    if(!wanted||q.n<wanted) return {why:"Bu miktar için akçe yetersiz",label:wanted?"Al ×"+wanted:"Al ×0"};
+    return buy(q.total,"Al ×"+wanted+" · "+fmt(q.total),()=>{
+      const count=s.animals[id]+pendingAnimals(s,id);
+      queueDelivery(s,id,Array.from({length:wanted},(_,i)=>unitCost(id,count+i)));
+      return wanted+" hayvan yolda · "+cargoTimes[id]+" sn.";
+    });
+  }
+  if(action==="milestone") {
+    const p=stageRequirements(s);
+    if(s.paceStage>=40)return {why:"Zirve tamamlandı"};
+    if(s.lifetimeWealth<p.wealth||s.lifetimeXp<p.xp||p.elapsed<p.seconds)return {why:"Hedefler tamamlanmalı"};
+    return {run:()=>{
+      s.paceStage++;s.paceSince=(s.legacySeconds||0)+s.farmTime;
+      return "Servet basamağı "+s.paceStage+" tamamlandı.";
+    }};
+  }
+  if(action==="goldCross") {
+    if(!s.buildings.genetics)return {why:"Genetik laboratuvarı gerekli"};
+    if(!s.animals.holstein||!s.animals.simental)return {why:"Bir Holstein ve bir Simental gerekli"};
+    if(pendingAnimals(s,"goldBreed"))return {why:"Bir melez zaten yolda"};
+    if(s.stock.jerseyCream<2)return {why:"2 Kremalı Jersey Sütü gerekir"};
+    const price=unitCost("goldBreed",s.animals.goldBreed);
+    return buy(price,"Altın Irk Melezle · "+fmt(price)+" 💰",()=>{
+      s.stock.jerseyCream-=2;queueDelivery(s,"goldBreed",[price]);
+      return "Altın Irk yavrusu kamyonetle yola çıktı.";
+    });
+  }
+  if(action==="airExport") {
+    if(!s.buildings.airport||s.farmTime<s.nextExport)return {why:"Kargo uçağı bekliyor"};
+    const lot=exportLot(s,id);
+    if(lot.quantity<25)return {why:"En az 25 ürün gerekir"};
+    return {label:C.products[id].name+" · "+fmt(lot.value)+" 💰",run:()=>{
+      s.stock[id]-=lot.quantity;
+      s.nextExport=s.farmTime+2*DAY;
+      credit(s,lot.value);earnXp(s,lot.quantity*C.products[id].price);s.firstSale=true;
+      return "Uçak "+lot.quantity+" ürün ihraç etti · "+fmt(lot.value)+" akçe.";
+    }};
+  }
+  if(action==="animalSell") {
+    if(s.animals[id]<1||id==="manisa"&&s.animals.manisa===1)
+      return {why:"Başlangıç tavuğu çiftlikte kalır"};
+    const refund=Math.floor(lastBasis(s,id)*70/100);
+    return {label:"Zararına Sat (%70) · "+fmt(refund)+" 💰",run:()=>{
+      s.purchaseCosts[id]?.pop();
+      s.animals[id]--;if(!s.animals[id])s.breedPhase[id]=0;
+      s.coins+=refund;serviceDebt(s);
+      return "Bir "+C.animals[id].name+" satıldı · "+fmt(refund)+" akçe iade.";
+    }};
+  }
+  if(action==="supplier") {
+    return {label:s.supplier?"Sözleşmeyi Kapat":"Sözleşmeyi Aç",run:()=>{
+      s.supplier=!s.supplier;
+      if(s.supplier)runSupplier(s);
+      return s.supplier?"Silo tedarik sözleşmesi açık.":"Silo tedarik sözleşmesi kapalı.";
+    }};
+  }
+  if(action==="loan") {
+    if(s.loan)return {why:"Önce açık krediyi kapat"};
+    if(s.coins>Number.MAX_SAFE_INTEGER-1000)return {why:"Kasa limiti"};
+    return {run:()=>{
+      s.coins+=1000;s.loan={left:7,due:0,next:s.farmTime+DAY};
+      return "Köy Sandığı kredisi alındı · 7 × 160 akçe.";
+    }};
+  }
+  if(action==="buyBid") {
+    const b=s.auction?.buy;
+    if(!friday(s)||!b)return {why:"İhale Cuma günü açık"};
+    if(b.held>0)return {why:"Teklifin önde",label:"Teklifin önde"};
+    const amount=nextBid(b);
+    const label="Teklif Ver · "+fmt(amount)+" 💰";
+    if(amount>b.limit||s.coins<amount)return {why:amount>b.limit?"Tavan fiyata ulaşıldı":"Akçe yetersiz",label};
+    return buy(amount,label,()=>{
+      b.bid=amount;b.held=amount;b.owner="Sen";b.turn++;
+      b.next=s.farmTime+2+b.turn%3;
+      return "Teklifin önde · "+fmt(amount)+" akçe ayrıldı.";
+    });
+  }
+  if(action==="sellBid") {
+    if(!friday(s)||!s.auction)return {why:"İhale Cuma günü açık"};
+    if(s.auction.sale)return {why:"Bekleyen satış paketin var"};
+    if(s.stock[id]<5)return {why:"En az 5 ürün gerekli"};
+    return {run:()=>{
+      const lot=saleLot(s,id);
+      s.stock[id]-=lot.quantity;s.auction.sale=lot;
+      return fmt(lot.quantity)+" "+C.products[id].name+" toptan ihaleye ayrıldı.";
+    }};
+  }
+  if(action==="feed") {
+    const f=C.feeds[id], free=capacity(s,"silo")-sum(s.feed), limit=choice["Yemlik"];
+    const allowed=Math.min(free,Math.floor(s.coins/f.price));
+    const n=limit===Infinity?allowed:limit;
+    if(!n||n>allowed) return {label:"Al ×"+n,why:free<n||!free?"Siloda yeterli yer yok":"Akçe yetersiz"};
+    return buy(n*f.price,"Al ×"+fmt(n)+" · "+fmt(n*f.price),()=>{s.feed[id]+=n;});
+  }
+  if(action==="fill") {
+    if(sum(s.feed)>=capacity(s,"silo")) return {why:"Silo dolu"};
+    if(!entries(feedDemand(s)).some(([k,n])=>n>0&&s.coins>=C.feeds[k].price)) return {why:"Akçe yetersiz"};
+    return {run:()=>fillSilo(s)};
+  }
+  if(action==="forage") {
+    if(s.feed.grain>=1||s.coins>=C.feeds.grain.price) return {why:"Tahıl ve akçe tükendiğinde kullanılabilir"};
+    if(sum(s.feed)>=capacity(s,"silo")) return {why:"Siloda yer aç"};
+    return {label:weather(s)?"Tahıl topla ×2":"Tahıl topla",run:()=>sowGrain(s)+" tahıl toplandı."};
+  }
+  if(action==="clear") return s.feed[id]>0?{run:()=>{s.feed[id]--;}}:{why:"Yem yok"};
+  if(action==="sell") {
+    const base=s.stock[id]*C.products[id].price;
+    const {market,eventValue}=saleTerms(s,id,s.stock[id]);
+    const value=boostedRevenue(s,eventValue);
+    const label="Sat · "+fmt(value)+" 💰"+(eventValue>market?" · 🎪":"");
+    if(!s.stock[id]) return {why:"Stok yok",label};
+    return {label,run:()=>{s.stock[id]=0;credit(s,boostedRevenue(s,eventValue,true));earnXp(s,base);s.firstSale=true;}};
+  }
+  if(action==="sellAll") {
+    if(!sum(s.stock))return {why:"Ambar boş"};
+    return {run:()=>{
+      const balance=s.coins;
+      for(const id of Object.keys(s.stock))quote(s,"sell",id).run?.();
+      return fmt(s.coins-balance)+" akçe kazandın. Ambar stoku satıldı.";
+    }};
+  }
+  if(action==="build") {
+    const b=C.buildings[id], n=s.buildings[id];
+    if(n>=b.maxLevel) return {why:"Tamamlandı",label:"Tamamlandı"};
+    if(b.minDay&&eraDay(s)<b.minDay)return {why:"İlerleme koşulu",label:"🔒 Gün "+fmt(b.minDay)};
+    if(!b.minDay&&["dairy","oven"].includes(id)&&eraDay(s)<14)return {why:"Mandıra & Tesis çağı gerekli",label:"🔒 Gün 14"};
+    if(level(s)<b.level) return {why:"Çiftlik seviyesi "+b.level+" gerekir",label:"🔒 Sv. "+b.level};
+    const price=cost(b.baseCost,b.costGrowth||1,Math.max(0,n-1));
+    return buy(price,(n?"Genişlet":"Kur")+" · "+fmt(price),()=>{s.buildings[id]++;});
+  }
+  if(action==="craft") {
+    const r=C.recipes[id], job=s.jobs[r.building];
+    if(!s.buildings[r.building]) return {why:C.buildings[r.building].name+" gerekli"};
+    if(id==="cheese"&&!s.legacyCheese&&!s.claimed.includes("dairy")) return {why:"Kaşar tarifini görevden al"};
+    if(job) return {why:C.products[C.recipes[job.recipe].output].name+" · "+job.left+" sn"};
+    if(entries(r.inputs).some(([k,n])=>s.stock[k]<n)) return {why:"Malzeme eksik"};
+    const space=room(s)+sum(r.inputs);
+    if(space<r.units) return {why:"Ambarda yer aç"};
+    return {run:()=>{for(const [k,n] of entries(r.inputs)) s.stock[k]-=n;
+      const units=stockProduction(s,r.output,r.units,space);
+      s.jobs[r.building]={recipe:id,left:r.seconds,yield:units};}};
+  }
+  if(action==="research") {
+    const r=C.research[id];
+    if(s.research.includes(id)) return {why:"Tamamlandı",label:"Tamamlandı"};
+    if(!s.buildings.lab) return {why:"Islah istasyonu gerekli"};
+    if(!r.requires.every(k=>s.research.includes(k))) return {why:"Önceki araştırma gerekli"};
+    return buy(r.cost,"Araştır · "+fmt(r.cost),()=>{s.research.push(id);});
+  }
+  if(action==="worker") {
+    const w=workerSpecs[id], mode=s.workers[id];
+    if(mode) return {label:mode===2?"Duraklat":"Göreve döndür",run:()=>{
+      s.workers[id]=3-mode;
+      return w.name+(mode===2?" dinleniyor.":" göreve döndü.");
+    }};
+    if(level(s)<w.level) return {why:"Çiftlik seviyesi "+w.level+" gerekir",label:"🔒 Sv. "+w.level};
+    if(id==="dairyman"&&!s.buildings.dairy) return {why:"Mandıra gerekli",label:"🔒 Mandıra gerekli"};
+    return buy(w.price,"Kirala · "+fmt(w.price)+" 💰",()=>{s.workers[id]=2;return w.name+" işe başladı.";});
+  }
+  if(action==="medal") {
+    const event=townEvent(s);
+    if(event?.kind!=="medal"||event.index<=s.lastMedal) return {why:"Fuar ödülü kapandı"};
+    return {run:()=>{
+      s.lastMedal=event.index;credit(s,50);earnXp(s,100);
+      return "Gıda Fuarı altın madalyası alındı.";
+    }};
+  }
+  if(action==="quest") {
+    const q=quests[id];
+    if(s.claimed.includes(id)) return {why:"Ödül alındı"};
+    if(!q.done(s)) return {why:"Görev devam ediyor"};
+    return {run:()=>{s.claimed.push(id);credit(s,q.coins);earnXp(s,q.xp);return "Ödül alındı · "+q.award;}};
+  }
+  return {why:"Bilinmeyen işlem"};
+}
+let s, screen="Sürü", herdFilter="", writable=true, running=false;
+let muted=true, audio;
+try {muted=localStorage.getItem(SOUND_KEY)!=="on";} catch {}
+const jingles={
+  sell:[[988,0,.065],[1480,.06,.10]],
+  pet:[[690,0,.055],[920,.048,.11]],
+  lucky:[[784,0,.09],[1175,.065,.13],[1568,.14,.20]],
+  harvest:[[440,0,.037],[659,.034,.055]],
+  buy:[[392,0,.066],[587,.06,.09]],
+  chest:[[523,0,.12],[784,.10,.12],[1047,.20,.17],[1319,.32,.22]],
+  level:[[523,0,.10],[659,.09,.105],[784,.18,.105],[1047,.27,.21]]
+};
+function play(name) {
+  if(muted||audio?.state!=="running") return;
+  const start=audio.currentTime+.012;
+  for(const [frequency,delay,length] of jingles[name]) {
+    const osc=audio.createOscillator(), gain=audio.createGain(), at=start+delay;
+    osc.type=name==="harvest"||name==="pet"||name==="lucky"?"triangle":"square";osc.frequency.value=frequency;
+    gain.gain.setValueAtTime(.0001,at);
+    gain.gain.exponentialRampToValueAtTime(name==="harvest"?.017:.032,at+.009);
+    gain.gain.exponentialRampToValueAtTime(.0001,at+length);
+    osc.connect(gain);gain.connect(audio.destination);osc.start(at);osc.stop(at+length+.01);
+  }
+}
+function updateSound() {
+  $("sound").textContent=muted?"🔇 Ses kapalı":"🔊 Ses açık";
+  $("sound").setAttribute("aria-pressed",String(!muted));
+}
+async function unlockSound() {
+  if(muted) return false;
+  const Audio=window.AudioContext||window.webkitAudioContext;
+  if(!Audio) return false;
+  try {
+    audio ||= new Audio();
+    if(audio.state!=="running") await audio.resume();
+    return audio.state==="running";
+  } catch {return false;}
+}
+$("sound").onclick=async ()=>{
+  muted=!muted; updateSound();
+  try {localStorage.setItem(SOUND_KEY,muted?"off":"on");} catch {}
+  if(!muted) {
+    if(await unlockSound()) play("buy");
+    else $("notice").textContent="Ses başlatılamadı. Tekrar açarak deneyebilirsin.";
+  }
+};
+window.addEventListener("pointerdown",()=>{if(audio?.state!=="running") void unlockSound();},{passive:true});
+window.addEventListener("keydown",()=>{if(audio?.state!=="running") void unlockSound();});
+updateSound();
+
+function floating(anchor,labels,point,style="") {
+  const bounds=anchor.getBoundingClientRect();
+  const visible=bounds.bottom>0 && bounds.top<innerHeight;
+  const x=point?.x??(visible?bounds.left+bounds.width/2:innerWidth*.53);
+  const y=point?.y??(visible?bounds.top+bounds.height*.45:75);
+  labels.forEach((label,i)=>{
+    const el=document.createElement("span");
+    el.className="float"+(style?" "+style:"");el.textContent=label;el.setAttribute("aria-hidden","true");
+    el.style.left=Math.max(68,Math.min(innerWidth-68,x+(i-(labels.length-1)/2)*23))+"px";
+    el.style.top=Math.max(44,Math.min(innerHeight-35,y+i*19))+"px";
+    document.body.append(el);setTimeout(()=>el.remove(),1200);
+  });
+}
+function save() {
+  if(!writable) return;
+  try {localStorage.setItem(KEY,JSON.stringify(s));}
+  catch {writable=false;$("save").textContent="Geçici oturum · kayıt kapalı";}
+}
+function sync(welcome=false) {
+  const report={made:{},eaten:0}, elapsed=settle(s,Date.now(),report);
+  const made=entries(report.made).filter(([,n])=>n>0)
+    .map(([k,n])=>({id:k,n,name:C.products[k].name}));
+  if(welcome&&elapsed>=OFFLINE_REPORT_MIN) {queueReport(report,elapsed);}
+  if(welcome&&elapsed>0) {
+    const products=made.map(p=>fmt(p.n)+" "+p.name.toLocaleLowerCase("tr-TR"));
+    $("notice").textContent="Hoş geldin! "+fmt(elapsed)+" saniye hesaplandı. "+
+      (products.length?"Üretilen: "+products.join(", ")+". ":"Ürün oluşmadı. ")+
+      "Tüketilen yem: "+fmt(report.eaten)+".";
+  } else if(made.length&&!document.hidden) {
+    const rare=made.filter(p=>Object.hasOwn(rareProducts,p.id));
+    const normal=made.filter(p=>!Object.hasOwn(rareProducts,p.id));
+    play(rare.length?"lucky":"harvest");
+    const labels=normal.slice(0,3).map(p=>productIcon[p.id]+" +"+fmt(p.n)+" "+p.name);
+    if(normal.length>3)labels.push("+"+fmt(normal.slice(3).reduce((n,p)=>n+p.n,0))+" diğer ürün");
+    if(rare.length) {
+      const special=rare.map(p=>"✨ +"+fmt(p.n)+" "+p.name);
+      $("notice").textContent="Şanslı hasat · "+special.join(" · ");
+      const r=$("farm").getBoundingClientRect();
+      const anchor=r.bottom>0&&r.top<innerHeight?{x:r.left+r.width*.54,y:r.top+r.height*.25}:null;
+      floating($("farm"),special,anchor,"lucky");
+    }
+    if(labels.length)floating($("farm"),labels);
+  }
+}
+function button(action,id,label,primary=false,q=quote(s,action,id)) {
+  return '<button type="button" data-do="'+action+'" data-id="'+id+'"'+(primary?' class="primary"':'')+
+    (q.why?' disabled title="'+q.why+'"':'')+'>'+(q.label||label)+'</button>';
+}
+function card(icon,title,detail,controls,breed=false) {
+  return '<article class="card"><div class="card-top"><span class="icon'+(breed?' breed':'')+'" aria-hidden="true">'+icon+
+    '</span><div><h3>'+title+'</h3><small>'+detail+'</small></div></div><div class="controls">'+controls+'</div></article>';
+}
+function cards() {
+  if(screen==="Çağlar")return industryCards();
+  if(screen==="Hayvanlarım")return portfolioCards();
+  if(screen==="İhaleler")return auctionCards();
+  if(screen==="Sürü") return entries(C.animals).filter(([,a])=>matchesHerd(a,herdFilter)).map(([id,a])=>{
+    const b=batch(s,a);
+    const needsSpace=b.output>capacity(s,"barn");
+    return card(breedIcons[id],a.name+" · "+fmt(s.animals[id])+deliveryLabel(id),
+      b.feed+" "+C.feeds[a.feed].name+" → "+b.output+" "+C.products[a.product].name+" / "+durations[id]+" sn"+
+      (needsSpace?" · En az "+b.output+" ambar yeri gerekir":""),button("animal",id,"Al",true),true);
+  });
+  if(screen==="Yemlik") return entries(C.feeds).map(([id,f])=>card(feedIcon[id],f.name+" · "+fmt(s.feed[id]),
+    f.price+" akçe / rasyon",button("feed",id,"Al",true)+button("clear",id,"1 boşalt"))
+  ).concat(card("🌱","Tarladan tahıl","Akçen ve tahılın bittiğinde bir rasyon topla.",button("forage","grain","Tahıl topla")));
+  if(screen==="Pazar") return entries(C.products).map(([id,p])=>{
+    const round=Math.floor(s.farmTime/MARKET_ROUND), current=seasonPrice(s,id,round), previous=seasonPrice(s,id,round-1);
+    const priceClass=current>previous?"price-up":current<previous?"price-down":"price-steady";
+    const arrow=current>previous?"▲ ":current<previous?"▼ ":"";
+    const rare=Object.hasOwn(rareProducts,id);
+    return card(productIcon[id],p.name+" · "+fmt(s.stock[id]),
+      '<span class="'+priceClass+'"><b>'+arrow+fmt(current)+'</b> akçe / birim</span>'+(winter(s)?" · Kış +%25":rare?" · Sabit fiyat":"")+(round>0&&!rare?" · Önceki "+fmt(previous):""),
+      button("sell",id,"Sat",true));
+  });
+  if(screen==="Yapılar") return entries(C.buildings).filter(([id])=>!Object.hasOwn(industryBuildings,id)).map(([id,b])=>{
+    const n=s.buildings[id], info=b.baseCapacity?
+      "Kapasite "+fmt(capacity(s,id))+(n<b.maxLevel?" → "+fmt(capacity(s,id)*b.capacityGrowth):""):
+      ({dairy:"Kaşar, tereyağı ve keçi peyniri",oven:"Ballı kek üretimi",lab:"Dört kalıcı araştırma"})[id];
+    return card(buildingIcon[id],b.name+(n?" · Sv. "+n:""),info,button("build",id,"Kur",true));
+  });
+  if(screen==="Atölye") return entries(C.recipes).map(([id,r])=>{
+    const inputs=entries(r.inputs).map(([k,n])=>n+" "+productIcon[k]+" "+C.products[k].name).join(" + ");
+    const q=quote(s,"craft",id);
+    return card(productIcon[r.output],C.products[r.output].name,inputs+" → "+r.units+" adet · "+r.seconds+" sn",
+      button("craft",id,q.why||"Başlat",true,q));
+  });
+  if(screen==="Çalışanlar") return entries(workerSpecs).map(([id,w])=>{
+    const mode=s.workers[id];
+    return card(w.icon,w.name+(mode===2?" · Görevde":mode===1?" · Dinleniyor":""),
+      w.detail+(mode?"":" Bir defalık ücret."),button("worker",id,"Kirala",true));
+  });
+  return entries(C.research).map(([id,r])=>{
+    const parents=r.requires.map(k=>C.research[k].name).join(" + ")||"Islah istasyonu";
+    const effect=r.extraYield?"+"+r.extraYield+" ürün":"−"+r.feedSaving+" yem";
+    return card("🧬",r.name,C.feeds[r.feed].name+" kullananlarda "+effect+" / hasat · "+parents,
+      button("research",id,"Araştır · "+fmt(r.cost),true));
+  });
+}
+function questCards() {
+  return entries(quests).map(([id,q])=>{
+    const claimed=s.claimed.includes(id);
+    return '<article class="quest'+(claimed?' done':'')+'"><h3>'+q.icon+' '+q.title+'</h3><small>'+
+      q.progress(s)+'</small><small class="reward">🎁 '+q.award+'</small>'+
+      (claimed?'<small>✓ Ödül alındı</small>':button("quest",id,"Ödülü al",true))+'</article>';
+  }).join("");
+}
+const htmlCache=new Map();
+function farmRank(l) {
+  if(l>=6)return "Bozkır Baronu";
+  if(l>=5)return "Çiftlik Ağası";
+  if(l>=3)return "Mandıra Sahibi";
+  return "Köy Çırağı";
+}
+const nameDialog=$("nameDialog");
+$("renameOpen").disabled=true;
+$("renameOpen").onclick=()=>{
+  $("farmNameInput").value=s.farmName;
+  nameDialog.showModal();
+  $("farmNameInput").select();
+};
+$("nameCancel").onclick=()=>nameDialog.close();
+$("nameForm").onsubmit=event=>{
+  event.preventDefault();
+  const input=$("farmNameInput");
+  const name=input.value.trim();
+  if(!name||/[\u0000-\u001f\u007f]/.test(name)) {
+    input.setCustomValidity("Çiftliğin için bir ad yaz.");
+    input.reportValidity();
+    return;
+  }
+  s.farmName=name;
+  save();render();nameDialog.close();
+};
+$("farmNameInput").oninput=event=>event.target.setCustomValidity("");
+nameDialog.addEventListener("close",()=>$("farmNameInput").setCustomValidity(""));
+function updateHTML(id,html) {
+  if(htmlCache.get(id)===html) return;
+  const root=$(id), active=document.activeElement, key=root.contains(active)?active.dataset:null;
+  root.innerHTML=html;htmlCache.set(id,html);
+  if(key?.do)root.querySelector('[data-do="'+key.do+'"][data-id="'+key.id+'"]')?.focus({preventScroll:true});
+  if(key?.quantity)root.querySelector('[data-quantity="'+key.quantity+'"]')?.focus({preventScroll:true});
+}
+function renderNews() {
+  const rain=weather(s), event=townEvent(s);
+  let weatherText="Bereketli Yağmur: Tarladan tahıl toplama verimi 2 katına çıktı!";
+  const fairText="Kasaba Panayırı: Yumurta ve süt satış gelirleri 60 saniyeliğine %50 arttı!";
+  const medalText="Gıda Fuarı Ödülü: Çiftliğin altın madalya kazandı (+100 XP, +50 Akçe)!";
+  const row=(kind,icon,text,seconds,extra="")=>'<div class="news '+kind+'"><span aria-hidden="true">'+
+    icon+'</span><p>'+text+'</p><time>'+seconds+' sn</time>'+extra+'</div>';
+  if(winter(s)&&rain)weatherText="Bereketli Kar · Tarladan tahıl toplama verimi iki katına çıktı.";
+  let html=friday(s)?row("fair","⚖️","BÜYÜK CUMA İHALESİ BAŞLADI!",DAY-s.farmTime%DAY,
+    '<button id="showAuctions" type="button">İhaleyi Aç</button>'):"";
+  if(rain)html+=row("rain",winter(s)?"❄️":"🌧️",weatherText,rain);
+  if(event?.kind==="fair") html+=row("fair","🎪",fairText,event.remaining);
+  if(event?.kind==="medal") html+=row("fair","🏅",medalText,event.remaining,
+    event.index>s.lastMedal?button("medal","","Ödülü al",true):"<small>✓ Alındı</small>");
+  updateHTML("bulletin",html);
+  const narration=[friday(s)?"Büyük Cuma ihalesi başladı!":"",rain?weatherText:"",event?.kind==="fair"?fairText:event?medalText:""].filter(Boolean).join(" ");
+  if($("newsLive").textContent!==narration) $("newsLive").textContent=narration;
+}
+function celebrate() {
+  if(typeof navigator.vibrate==="function")navigator.vibrate(26);
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  const colors=["#edb744","#e06c53","#61966c","#fff2ba","#459bb0"];
+  for(let i=0;i<16;i++) {
+    const angle=i*Math.PI/8, distance=80+(i%4)*31, el=document.createElement("i");
+    el.className="confetti";
+    el.style.setProperty("--tone",colors[i%colors.length]);
+    el.style.setProperty("--x",Math.round(Math.cos(angle)*distance)+"px");
+    el.style.setProperty("--y",Math.round(Math.sin(angle)*distance)+"px");
+    el.style.setProperty("--turn",(140+i*47)+"deg");
+    document.body.append(el);setTimeout(()=>el.remove(),940);
+  }
+}
+const reportDialog=$("reportDialog"), valleyDialog=$("valleyDialog");
+$("jumpQuest").onclick=()=>$("questsTitle").scrollIntoView({block:"start"});
+function queueReport(report,seconds) {
+  const pending=s.offlineChest??{seconds:0,eaten:0,made:{}};
+  pending.seconds+=seconds;pending.eaten+=report.eaten;
+  for(const [id,amount] of entries(report.made))
+    if(amount>0)pending.made[id]=(pending.made[id]||0)+amount;
+  s.offlineChest=pending;
+  save();
+}
+function reportOffer() {
+  const made=s.offlineChest?.made||{}, offer={items:{},base:0};
+  for(const id of ["egg","milk","goatMilk","honey"]) {
+    const count=Math.min(s.stock[id],Math.floor((made[id]||0)/10));
+    if(!count)continue;
+    offer.items[id]=count;offer.base+=count*C.products[id].price;
+  }
+  return offer;
+}
+function renderReport() {
+  const pending=s.offlineChest;
+  if(!pending)return;
+  if(document.hidden)return;
+  const minutes=Math.floor(pending.seconds/60), hours=Math.floor(minutes/60);
+  $("reportDuration").textContent=(hours?hours+" sa ":"")+minutes%60+" dk hesaplandı · "+fmt(pending.eaten)+" rasyon kullanıldı";
+  updateHTML("reportGoods",entries(pending.made).map(([id,n])=>
+    "<p>"+productIcon[id]+" <b>+"+fmt(n)+"</b> "+C.products[id].name+"</p>").join("")||
+    "<p>Bu aralıkta ambara ürün girmedi.</p>");
+  const offer=reportOffer(), selected=$("reportSell").checked&&offer.base>0;
+  $("reportSaleLabel").hidden=!offer.base;
+  const summary=entries(offer.items).map(([id,n])=>n+" "+C.products[id].name.toLocaleLowerCase("tr-TR")).join(", ");
+  $("reportCash").textContent=selected?"💰 +"+fmt(boostedRevenue(s,offer.base))+" akçe · Satılacak: "+summary:
+    offer.base?"Ürünler ambarda. İstersen "+summary+" sat.":
+    "Ürünlerin ambarda. Satış için pazarı kullanabilirsin.";
+  if(!reportDialog.open&&!settings.open&&!valleyDialog.open&&!nameDialog.open&&!sceneDetail.open) {
+    reportDialog.showModal();
+    if(audio?.state==="running")play("chest");
+  }
+}
+$("reportSell").onchange=renderReport;
+reportDialog.addEventListener("cancel",e=>e.preventDefault());
+$("reportCollect").onclick=async ()=>{
+  if(!s.offlineChest)return;
+  if($("reportSell").checked) {
+    const offer=reportOffer();
+    if(offer.base>0) {
+      for(const [id,n] of entries(offer.items))s.stock[id]-=n;
+      credit(s,boostedRevenue(s,offer.base,true));
+      earnXp(s,offer.base);s.firstSale=true;
+    }
+  }
+  s.offlineChest=null;$("reportSell").checked=false;
+  save();reportDialog.close();render();celebrate();
+  if(await unlockSound())play("chest");
+};
+$("cargo").onclick=async ()=>{
+  sync();
+  const result=openCargo(s);
+  if(!result){render();return;}
+  $("notice").textContent=result;
+  floating($("cargo"),[result.split(" · ")[0]],null,"lucky");
+  save();render();celebrate();
+  if(await unlockSound())play("lucky");
+};
+$("valleyOpen").onclick=()=>{
+  sync();
+  if(level(s)<5||s.loan||s.auction?.buy.held||s.auction?.sale||s.deliveries.length)return;
+  const n=nalAward(s);
+  $("valleyEstimate").textContent="Bu vadide kazanılan: "+fmt(s.wealth)+" akçe. Taşınırsan +"+n+
+    " Altın Nal alırsın. Yeni toplam üretim ve satış bonusun +%"+fmt(prestigePercent(s)+5*n)+".";
+  valleyDialog.showModal();
+};
+$("valleyCancel").onclick=()=>valleyDialog.close();
+$("valleyConfirm").onclick=async ()=>{
+  sync();
+  if(level(s)<5||s.loan||s.auction?.buy.held||s.auction?.sale||s.deliveries.length)return;
+  const next=newValley(s);
+  try {localStorage.setItem(KEY,JSON.stringify(next));}
+  catch {$("valleyEstimate").textContent="Yeni kayıt yazılamadı. Mevcut vadi açık.";return;}
+  s=next;writable=true;screen="Sürü";herdFilter="";farmSignature="";
+  choice["Sürü"]=choice["Yemlik"]=1;
+  $("notice").textContent="Yeni vadine hoş geldin! Altın Nal bonusun +%"+fmt(prestigePercent(s))+".";
+  valleyDialog.close();render();celebrate();
+  if(await unlockSound())play("level");
+};
+function supplierControl() {
+  return button("supplier","","Silo Sözleşmesi",false)+
+    '<small>Tedarikçi '+(s.supplier?"açık":"kapalı")+' · Silo %10’un altına inince akçeyle yem alır.</small>';
+}
+function netPerDay(s,id) {
+  const a=C.animals[id], b=batch(s,a), cycles=DAY/durations[id];
+  return theoreticalRate(s,id)*seasonPrice(s,a.product)*(1+prestigePercent(s)/100)-
+    b.feed*s.animals[id]*cycles*C.feeds[a.feed].price;
+}
+const industryInfo={
+  iceFactory:["🍨","Süt, tereyağı ve balı Bozkır Dondurması’na dönüştürür."],
+  mixer:["🌾","Her oyun gününde siloya en fazla 60 ücretsiz rasyon karıştırır."],
+  biogas:["⚡","Her gün 50 akçe ve hayvan başına 10 akçe verir. Günlük tavan 3.000."],
+  genetics:["🧬","Holstein ile Simental’i melezleyip Altın Irk yetiştir."],
+  airport:["✈️","İki oyun gününde bir, 25–100 ürünü güncel fiyatın %35 üstüne ihraç et."],
+  megaSilo:["🏗️","Mevcut yem silosu kapasitesini sekiz katına çıkarır."]
+};
+function industryCards() {
+  const day=eraDay(s), req=stageRequirements(s), eta=Math.max(0,req.seconds-req.elapsed);
+  const pace='<section class="auction-panel era-track"><h3>📈 Servet basamağı '+(s.paceStage+1)+
+    ' · '+fmt(req.source)+' → '+fmt(req.wealth)+' akçe</h3><p>Kazanılan '+fmt(s.lifetimeWealth)+' / '+
+    fmt(req.wealth)+' akçe · '+fmt(s.lifetimeXp)+' / '+fmt(req.xp)+' XP</p>'+
+    '<progress max="'+req.seconds+'" value="'+Math.min(req.seconds,req.elapsed)+'"></progress>'+
+    '<small>'+(s.paceSince<0?"Sayaç ilk 100 akçeyi kazanınca başlar.":"Süre koşuluna "+fmt(eta)+" sn kaldı.")+
+    ' · Her basamak %60 daha uzun sürer; XP artışı da %60 büyür.</small>'+
+    '<div>'+button("milestone","","Basamağı Tamamla",true)+'</div></section>';
+  const era='<section class="auction-panel"><h3>📚 '+eraName(day)+' · Gün '+fmt(day)+'</h3>'+
+    '<p>Köy 1 → Mandıra &amp; Tesis 14 → Endüstriyel Agro 365 → Mega Holding 2.000</p>'+
+    '<small>Çağ günleri yeni vadiye taşınırken de birikir.</small></section>';
+  return [era,pace,...entries(industryBuildings).map(([id,b])=>{
+    const [icon,detail]=industryInfo[id], built=s.buildings[id]>0;
+    let actions=button("build",id,"Kur",true);
+    if(built&&id==="genetics")actions+=button("goldCross","","Altın Irk Melezle",true)+
+      '<small>1 Holstein, 1 Simental ve 2 Kremalı Jersey Sütü gerektirir.</small>';
+    if(built&&id==="airport"){
+      const wait=Math.max(0,s.nextExport-s.farmTime);
+      actions+=wait?'<small>Sonraki kalkış '+wait+' sn.</small>':
+        ["milk","goatMilk","honey","iceCream"].map(k=>button("airExport",k,C.products[k].name,true)).join("");
+    }
+    return card(icon,b.name+(built?" · Kurulu":""),"Gün "+fmt(b.minDay)+" · "+detail,actions);
+  })];
+}
+function deliveryLabel(id) {
+  const lots=s.deliveries.filter(d=>d.id===id);
+  if(!lots.length)return "";
+  return " · 🚚 "+fmt(pendingAnimals(s,id))+" yolda, "+Math.min(...lots.map(d=>d.arrive-s.farmTime))+" sn";
+}
+function portfolioCards() {
+  const list=ids.filter(id=>s.animals[id]>0);
+  const total=list.reduce((n,id)=>n+netPerDay(s,id),0);
+  const summary='<section class="auction-panel"><h3>Sürü portföyü · '+fmt(sum(s.animals))+' hayvan ve kovan</h3>'+
+    '<p>Tahmini toplam net: <b>'+fmt(Math.round(total*10)/10)+' akçe / gün</b></p>'+
+    '<small>Güncel fiyat ve düzenli hasat varsayılır. Yem gideri düşülür; panayır ve kargo dahil edilmez.</small></section>';
+  return [summary,...list.map(id=>{
+    const a=C.animals[id], refund=quote(s,"animalSell",id);
+    return card(breedIcons[id],a.name+" · "+fmt(s.animals[id])+" adet",
+      fmt(Math.round(theoreticalRate(s,id)*10)/10)+" "+C.products[a.product].name+" / gün · Net "+
+      fmt(Math.round(netPerDay(s,id)*10)/10)+" akçe / gün",button("animalSell",id,"Zararına Sat (%70 İade)",true,refund)+
+      (refund.why?'<small>Başlangıç tavuğu çiftlikte kalır.</small>':'<small>Son alınanın maliyetinin %70’i iade edilir.</small>'),true);
+  })];
+}
+function loanCard() {
+  const l=s.loan, status=l?"Kalan borç: "+fmt(l.left*160+l.due)+" akçe · "+
+    l.left+" taksit"+(l.due?" · "+fmt(l.due)+" gecikmiş":""):"1.000 akçe al · Her oyun gününde 160 akçe · Toplam 1.120 akçe.";
+  return '<section class="auction-panel"><h3>🏦 Köy Sandığı</h3><p>'+status+'</p>'+
+    '<small>Taksit 60 sn arayla kasadan kesilir. Eksik ödeme sonraki akçe gelirinden alınır.</small>'+
+    '<div class="auction-controls">'+button("loan","","Tarım Kredisi Al · 1.000 💰",true)+'</div></section>';
+}
+function auctionCards() {
+  const out=[];
+  if(s.lastAuction)out.push('<section class="auction-panel"><h3>Son ihale sonucu</h3><p id="auctionResult"></p></section>');
+  const a=s.auction;
+  if(!friday(s)||!a) {
+    const seconds=(FRIDAY-s.farmTime%WEEK+WEEK)%WEEK;
+    out.push('<section class="auction-panel"><h3>Her Cuma büyük ihale</h3><p>Sonraki Cuma: '+seconds+' sn.</p>'+
+      '<small>Alımda en yüksek teklif kazanır. Satışta zincirler ayrılan ürüne teklif verir.</small></section>');
+    return [...out,loanCard()];
+  }
+  const b=a.buy,sale=a.sale;
+  out.push('<section class="auction-panel"><h3>⚖️ Büyük Cuma İhalesi</h3><p>Kapanışa '+(DAY-s.farmTime%DAY)+' sn.</p></section>');
+  const discount=fmt(Math.round((1-b.bid/b.basis)*1000)/10);
+  out.push('<section class="auction-panel"><h3>🐄 İhale Al · '+b.quantity+' × '+C.animals[b.id].name+'</h3>'+
+    '<p>Piyasa paketi '+fmt(b.basis)+' akçe · Son teklif <b>'+fmt(b.bid)+' akçe</b> · %'+discount+' indirim</p>'+
+    '<p>Önde: <b>'+b.owner+'</b>'+(b.held?" · "+fmt(b.held)+" akçe ayrıldı":"")+'</p>'+
+    '<small>Teklifin aşılırsa ayrılan akçe geri döner. Gün sonunda öndeki teklif kazanır.</small>'+
+    '<div class="auction-controls">'+button("buyBid","","Teklif Ver",true)+'</div></section>');
+  const sales=LOT_PRODUCTS.map(id=>button("sellBid",id,C.products[id].name+" · "+Math.min(s.stock[id],24),true)).join("");
+  out.push('<section class="auction-panel"><h3>📦 İhale Sat · Toptan satış</h3>'+
+    (sale?'<p>'+sale.quantity+' '+C.products[sale.id].name+' ayrıldı · Piyasa '+fmt(sale.basis)+
+      ' akçe · <b>'+sale.owner+' '+fmt(sale.offer)+' akçe</b> teklif etti.</p>'+
+      '<small>Fiyat primi %'+fmt(Math.round((sale.offer/sale.basis-1)*1000)/10)+' · Gün sonunda otomatik satılır.</small>':
+      '<p>Bir üründen 5–24 adet ayır. Zincirler piyasanın %6–31 üzerinde teklif verir.</p><div class="auction-controls">'+sales+'</div>')+
+    '</section>');
+  return [...out,loanCard()];
+}
+function renderCalendar() {
+  const day=Math.floor(s.farmTime/DAY), season=SEASONS[weekOf(s.farmTime)%4];
+  $("calendarDay").textContent="📅 Gün "+fmt(eraDay(s))+" · "+WEEKDAYS[day%7];
+  $("calendarClock").textContent="Kalan: "+(DAY-s.farmTime%DAY)+" sn";
+  $("calendarSeason").textContent=season+" · "+eraName(eraDay(s));
+  document.body.classList.toggle("winter",winter(s));
+  const warning=(label,x)=>'<span class="warn-tag" style="--x:'+x+'%">'+label+'</span>';
+  updateHTML("sceneWarnings",(!sum(s.feed)?warning("⚠️ YEM BİTTİ!",36):"")+
+    (room(s)<=0?warning("📦 AMBAR DOLU!",55):""));
+}
+function render() {
+  const held=reserved(s), total=sum(s.animals), currentLevel=level(s);
+  const route=s.deliveries[0];
+  $("deliveryStatus").textContent=route?"🚚 "+fmt(s.deliveries.length)+" nakliye · İlk teslimata "+Math.min(...s.deliveries.map(d=>d.arrive-s.farmTime))+" sn":s.lastDelivery;
+  const signature=Object.values(s.animals).join(",")+"|"+Object.values(s.buildings).join(",")+"|"+currentLevel;
+  if(signature!==farmSignature) {
+    farmSignature=signature;farmActors=flockActors(s);sceneStill=false;
+  }
+  $("plot").textContent="🌿 "+fmt(total)+" hayvan ve kovan · "+skyState(s.farmTime).name;
+
+  if($("renameOpen").textContent!==s.farmName)$("renameOpen").textContent=s.farmName;
+  $("farmTitle").textContent=farmRank(currentLevel);
+  $("coins").textContent=fmt(s.coins);$("level").textContent=currentLevel;
+  const next=Math.ceil(C.xpBase*(C.xpGrowth**currentLevel-1)/(C.xpGrowth-1)-1e-9);
+  $("xp").textContent=fmt(s.xp)+" / "+fmt(next)+" XP";
+  $("silo").textContent=fmt(sum(s.feed))+" / "+fmt(capacity(s,"silo"));
+  $("barn").textContent=fmt(sum(s.stock)+held)+" / "+fmt(capacity(s,"barn"));
+  const pledged=s.auction?.sale?.quantity||0;
+  $("space").textContent=[held>pledged?(held-pledged)+" yer atölye":"",pledged?pledged+" yer ihale":""].filter(Boolean).join(" · ");
+  const clock=harvestClock(s);
+  $("progress").max=durations[clock.id]||DAY;$("progress").value=s.breedPhase[clock.id]||0;
+  const fast=harvestSpeed(s)===3, ready=s.farmTime>=s.cargoReady;
+  $("time").textContent=clock.seconds+" sn";
+  $("cargo").disabled=!ready;
+  $("cargo").dataset.ready=String(ready);
+  const wait=Math.max(0,s.cargoReady-s.farmTime);
+  $("cargoStatus").textContent=fast?"🚜 ×3 · "+(s.tractorUntil-s.farmTime)+" sn":ready?"Açmaya hazır":Math.floor(wait/60)+":"+String(wait%60).padStart(2,"0");
+  $("horseshoes").textContent="🐎 "+fmt(s.nals)+" Altın Nal · +%"+fmt(prestigePercent(s));
+  const blockedMove=!!(s.loan||s.auction?.buy.held||s.auction?.sale||s.deliveries.length);
+  $("valleyOpen").disabled=currentLevel<5||blockedMove;
+  $("valleyOpen").title=blockedMove?"Önce borç, ihale ve nakliye tamamlanmalı.":"";
+  $("valleyOpen").textContent=currentLevel<5?"Yeni Vadi · Sv. 5":blockedMove?"Yeni Vadi · Borç, ihale veya nakliye açık":"Çiftliği Devret & Yeni Vadiye Taşın";
+  const finished=entries(quests).filter(([id,q])=>!s.claimed.includes(id)&&q.done(s)).length;
+  $("jumpQuest").textContent="📜 Çiftlik Günlüğü"+(finished?" · "+finished+" ödül hazır":"");
+  const free=room(s), working=ids.some(id=>{
+    const a=C.animals[id], b=batch(s,a);return s.animals[id]>0&&s.feed[a.feed]>=b.feed&&free>=b.output;
+  });
+  $("status").textContent=working?"Bir sonraki hasat":free===0?"Ambar dolu · pazarda yer aç":"Hasat bekliyor · yem ve alanı kontrol et";
+  $("heading").textContent=screen;
+  $("visitAnimal").title=s.farmTime<s.petReady?"Sonraki bonus: "+(s.petReady-s.farmTime)+" sn":"Bir hayvanı sev";
+  renderCalendar();
+  renderNews();
+  for(const b of $("tabs").children) b.setAttribute("aria-pressed",String(b.dataset.tab===screen));
+  updateHTML("quantities",Object.hasOwn(choice,screen)?amounts.map(q=>
+    '<button type="button" data-quantity="'+q+'" aria-pressed="'+(choice[screen]===q)+'">'+(q===Infinity?"Maks":"x"+q)+'</button>').join(""):"");
+  updateHTML("quickFeed",screen==="Yemlik"?button("fill","","🌾 Hepsini Besle",true)+
+    supplierControl():
+    screen==="Sürü"&&herdFilter?'<div class="market-head"><strong>'+(herdFilter==="cows"?"İnekler":"Tavuklar")+'</strong> <button id="clearHerd" type="button">Tüm sürü</button></div>':
+    screen==="Pazar"?'<div class="quick-market">'+button("sellAll","","Hepsini Tek Tıkla Sat",true)+
+    '<div class="market-head"><strong>Talep yenilenmesine '+(MARKET_ROUND-s.farmTime%MARKET_ROUND)+
+    ' sn</strong><small>'+(winter(s)?"Kış fiyatı +%25. ":"")+'Anlık ambar değeri '+fmt(stockValue())+' akçe.</small></div></div>':"");
+  updateHTML("list",cards().join(""));
+  if($("auctionResult"))$("auctionResult").textContent=s.lastAuction;
+  updateHTML("questList",questCards());
+  renderSceneSigns();
+  renderSceneDetail();
+  renderReport();
+}
+
+const messages={milestone:"Hedef tamamlandı.",feed:"Yem siloya eklendi.",clear:"Bir rasyon boşaltıldı.",forage:"Bir tahıl toplandı.",
+  sell:"Ürün satıldı.",build:"Yapı hazır.",craft:"Sipariş başladı.",research:"Araştırma tamamlandı."};
+function onAction(event) {
+  const b=event.target.closest("button[data-do]");
+  if(!b) return;
+  const {do:action,id}=b.dataset;
+  sync();const prev={coins:s.coins,xp:s.xp,level:level(s)};
+  const q=quote(s,action,id);
+  const message=q.run?(q.run()||messages[action]):q.why;
+  $("notice").textContent=message;
+  if(sceneDetail.open)$("sceneDetailStatus").textContent=message;
+  runSupplier(s);
+  if(q.run) {
+    const labels=[],coins=s.coins-prev.coins,xp=s.xp-prev.xp,current=level(s);
+    if(coins>0)labels.push("💰 +"+fmt(coins)+" Akçe");
+    if(xp>0)labels.push("⭐ +"+fmt(xp)+" XP");
+    if(current>prev.level)labels.push("▲ Seviye "+current);
+    const point=event.detail?{x:event.clientX,y:event.clientY}:null;
+    if(labels.length)floating(b,labels,point);
+    if(["animal","quest","build"].includes(action)||current>prev.level)celebrate();
+    if(action==="sell"||action==="sellAll")play("sell");
+    else if(["animal","feed","fill","build","research","quest","craft","worker","medal","buyBid","sellBid","loan","supplier","animalSell","goldCross","airExport","milestone"].includes(action))play("buy");
+    if(current>prev.level)setTimeout(()=>play("level"),["sell","sellAll"].includes(action)?180:110);
+  }
+  save();render();
+}
+const settings=$("settings");
+let pendingChange=null, importGeneration=0;
+function clearConfirmation() {
+  pendingChange=null;
+  $("confirmSave").hidden=true;
+  $("settingsActions").hidden=false;
+}
+function requestChange(candidate,message,label) {
+  pendingChange=candidate;
+  $("settingsStatus").textContent="";
+  $("confirmMessage").textContent=message;
+  $("applyChange").textContent=label;
+  $("settingsActions").hidden=true;
+  $("confirmSave").hidden=false;
+  $("cancelChange").focus();
+}
+$("settingsOpen").disabled=true;
+$("settingsOpen").onclick=()=>{
+  clearConfirmation();
+  $("settingsStatus").textContent="";
+  settings.showModal();
+};
+$("settingsClose").onclick=()=>settings.close();
+settings.addEventListener("close",()=>{importGeneration++;clearConfirmation();});
+$("cancelChange").onclick=()=>{clearConfirmation();$("importSave").focus();};
+$("exportSave").onclick=()=>{
+  sync();save();render();
+  const backup={format:"bozkir-ciftligi",version:1,exportedAt:new Date().toISOString(),state:s};
+  const url=URL.createObjectURL(new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}));
+  const link=document.createElement("a");
+  link.href=url;
+  link.download="Bozkir-Ciftligi-Yedek-"+new Date().toISOString().replace(/[:.]/g,"-")+".json";
+  document.body.append(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),30000);
+  $("settingsStatus").textContent="Yedek indirmeye hazırlandı.";
+};
+$("importSave").onclick=()=>{$("backupFile").value="";$("backupFile").click();};
+$("backupFile").onchange=async ()=>{
+  const file=$("backupFile").files[0];
+  if(!file)return;
+  const generation=++importGeneration;
+  try {
+    if(file.size>1024*1024)throw Error("Boyut");
+    const data=JSON.parse((await file.text()).replace(/^\uFEFF/,""));
+    if(generation!==importGeneration||!settings.open)return;
+    const wrapped=data?.format==="bozkir-ciftligi";
+    const candidate=wrapped?data.state:data;
+    if((wrapped&&data.version!==1)||!valid(candidate))throw Error("Kayıt");
+    const state=questState(candidate);
+    requestChange({state},"Yedek, şu an açık olan çiftlik kaydının yerine geçecek.","Yedeği yükle");
+  } catch {
+    if(generation===importGeneration&&settings.open)
+      $("settingsStatus").textContent="Dosya geçerli bir Bozkır Çiftliği yedeği olarak okunamadı.";
+  }
+};
+$("resetSave").onclick=()=>{
+  importGeneration++;
+  requestChange({reset:true},"Hayvanlar, akçe, XP ve binalar başlangıca dönecek. Önce Ayarlar’dan JSON yedeği alabilirsin.","Evet, yeni oyun başlat");
+};
+$("applyChange").onclick=()=>{
+  if(!pendingChange)return;
+  const {reset,state}=pendingChange;
+  const next=reset?questState(fresh()):state;
+  const now=Date.now();
+  next.lastMs=Math.min(next.lastMs||now,now);
+  try {localStorage.setItem(KEY,JSON.stringify(next));}
+  catch {$("settingsStatus").textContent="Tarayıcı yeni kaydı yazamadı. Açık çiftlik korundu.";return;}
+  s=next;writable=true;screen="Sürü";herdFilter="";
+  choice["Sürü"]=choice["Yemlik"]=1;
+  farmSignature="";
+  $("save").textContent="Otomatik yerel kayıt · En fazla 8 saat çevrimdışı üretim";
+  $("notice").textContent=reset?"Yeni çiftlik başladı. İlk yumurtan 15 saniye sonra hazır.":"Çiftlik yedeği yüklendi.";
+  sync(!reset);save();settings.close();render();
+};
+function start() {
+  s=fresh();let loaded=false;
+  try {
+    const raw=localStorage.getItem(KEY);
+    if(raw){const v=JSON.parse(raw);if(!valid(v))throw Error("Geçersiz kayıt");s=v;loaded=true;}
+  } catch {writable=false;$("save").textContent="Geçici oturum · önceki kayıt korunuyor";}
+  questState(s);sync(loaded);save();running=true;
+  $("tabs").innerHTML=entries(tabs).map(([tab,icon])=>'<button type="button" data-tab="'+tab+
+    '"><span aria-hidden="true">'+icon+'</span> '+tab+'</button>').join("");
+  $("tabs").onclick=e=>{
+    const b=e.target.closest("[data-tab]");
+    if(!b)return;
+    jumpTo(b.dataset.tab,"",matchMedia("(max-width:760px)").matches);
+  };
+  $("bulletin").addEventListener("click",e=>{if(e.target.closest("#showAuctions"))jumpTo("İhaleler","",true);});
+  $("quickFeed").addEventListener("click",e=>{if(e.target.closest("#clearHerd"))jumpTo("Sürü");});
+  $("quantities").onclick=e=>{const b=e.target.closest("[data-quantity]");if(b){choice[screen]=Number(b.dataset.quantity);render();}};
+  for(const id of ["list","quickFeed","questList","bulletin"])$(id).onclick=onAction;
+  $("settingsOpen").disabled=false;
+  $("renameOpen").disabled=false;
+  render();
+  setInterval(()=>{if(!document.hidden){sync();save();render();}},1000);
+}
+document.addEventListener("visibilitychange",()=>{if(running){sync(!document.hidden);save();render();}});
+window.addEventListener("pagehide",()=>{if(running){if(!document.hidden)sync();save();}});
+const sceneDetail=$("sceneDetail");
+let sceneSelection=null, hotScene=null;
+const millProperty={id:"mill",name:"Yel Değirmeni",x:465,y:107,w:39,show:()=>true};
+const signDesign={
+  coop:["🏠","TAVUK KÜMESİ",72,82,94],stable:["🛖","BÜYÜKBAŞ AHIRI",133,59,66],
+  silo:["🏭","YEM SİLOSU",199,68,94],barn:["🏚️","ÜRÜN AMBARI",252,48,66],
+  dairy:["🥛","MANDIRA",307,80,94],oven:["🔥","FIRIN",366,74,66],
+  lab:["🧬","ISLAH",415,77,94],mill:["💨","YEL DEĞİRMENİ",464,57,66]
+};
+function matchesHerd(animal,filter) {
+  return !filter||(filter==="cows"?animal.product==="milk":animal.feed==="grain");
+}
+function jumpTo(tab,filter="",scroll=false) {
+  screen=tab;herdFilter=filter;render();
+  if(scroll)$("heading").scrollIntoView({block:"start"});
+}
+function renderSceneSigns() {
+  updateHTML("buildingSigns",sceneBuildings.filter(b=>b.show(s)).map(b=>{
+    const [icon,label,x,y,mobile]=signDesign[b.id];
+    const style="--x:"+100*x/512+"%;--y:"+100*y/190+"%;--mobile-y:"+100*mobile/190+"%";
+    return '<button type="button" class="wood-sign" data-building="'+b.id+'" style="'+style+'" aria-haspopup="dialog">'+
+      '<span class="sign-icon" aria-hidden="true">'+icon+'</span><span class="sign-text">'+label+'</span></button>';
+  }).join(""));
+  for(const sign of $("buildingSigns").children)
+    sign.classList.toggle("is-lit",hotScene?.building?.id===sign.dataset.building);
+}
+function detailMetric(label,value) {
+  return '<div class="detail-metric"><small>'+label+'</small><strong>'+value+'</strong></div>';
+}
+const sceneMetrics=(...metrics)=>'<div class="detail-hero">'+metrics.join("")+'</div>';
+function detailList(rows) {
+  return '<ul class="detail-list">'+rows.map(([label,n])=>'<li><span>'+label+'</span><b>'+n+'</b></li>').join("")+'</ul>';
+}
+function detailJump(tab,label,filter="") {
+  return '<button type="button" data-view="'+tab+'" data-filter="'+filter+'">'+label+'</button>';
+}
+function nextHerd(filter="") {
+  const participating=ids.filter(id=>s.animals[id]>0&&matchesHerd(C.animals[id],filter));
+  const seconds=Math.min(...participating.map(id=>breedWait(s,id)));
+  const report={made:{},eaten:0,herd:{}};
+  if(Number.isFinite(seconds))advance(structuredClone(s),seconds,report);
+  return {seconds:Number.isFinite(seconds)?seconds:0,herd:report.herd};
+}
+function theoreticalRate(s,id,speed=1) {
+  return s.animals[id]*batch(s,C.animals[id]).output*DAY/durations[id]*speed*(1+prestigePercent(s)/100);
+}
+function breedWait(s,id) {
+  const remaining=durations[id]-s.breedPhase[id], boost=Math.max(0,s.tractorUntil-s.farmTime);
+  return remaining<=boost*3?Math.ceil(remaining/3):boost+remaining-3*boost;
+}
+function herdDetail(filter) {
+  const cow=filter==="cows", report=nextHerd(filter);
+  const list=entries(C.animals).filter(([id,a])=>s.animals[id]>0&&matchesHerd(a,filter));
+  const total=list.reduce((n,[id])=>n+s.animals[id],0);
+  const expected=list.reduce((n,[id])=>n+(report.herd[id]?.output||0),0);
+  const fed=list.reduce((n,[id])=>n+(report.herd[id]?.count||0),0);
+  const possible=list.reduce((n,[id])=>n+theoreticalRate(s,id,harvestSpeed(s)),0);
+  return {
+    html:sceneMetrics(detailMetric(cow?"Ahır nüfusu":"Kümes nüfusu",fmt(total)),
+      detailMetric(cow?"Sonraki hasatta süt":"Sonraki hasatta yumurta",fmt(expected)))+
+      (total?'<p class="detail-note">Sonraki hasat '+report.seconds+' sn. · Üretime hazır '+fmt(fed)+' / '+fmt(total)+
+      (cow?" inek":" tavuk")+'.</p>':"")+
+      '<p class="detail-note">Tam kapasite: '+fmt(Math.round(possible*10)/10)+
+      (cow?' süt / dk':' yumurta / dk')+' · Yeterli yem ve ambar yeriyle.</p>'+
+      (list.length?detailList(list.map(([id,a])=>[a.name,fmt(s.animals[id])+" adet"])):
+        '<p class="detail-note">Ahırda henüz inek yok.</p>'),
+    controls:detailJump("Sürü",cow?"İnek Satın Al":"Tavuk Satın Al",filter)
+  };
+}
+function saleTerms(state,id,quantity) {
+  const market=quantity*marketPrice(state,id);
+  return {market:winterRevenue(state,market),eventValue:winterRevenue(state,marketValue(state,id,market))};
+}
+function stockValue() {
+  const preview={nals:s.nals,saleCarry:s.saleCarry};
+  return entries(s.stock).reduce((sum,[id,n])=>
+    sum+boostedRevenue(preview,saleTerms(s,id,n).eventValue,true),0);
+}
+function animalDetail({id}) {
+  const animal=C.animals[id], b=batch(s,animal), count=s.animals[id], feed=s.feed[animal.feed];
+  const ready=Math.min(count,Math.floor(feed/b.feed),Math.floor(room(s)/b.output));
+  const description=ready?"Tok · "+fmt(ready)+" / "+fmt(count)+" hayvana yem ve yer hazır":
+    feed<b.feed?"Aç · Yemi yetersiz":"Bekliyor · Ambar kapasitesi yetersiz";
+  return {html:'<div class="detail-portrait">'+breedIcons[id]+'<b>Toplam '+fmt(count)+' adet</b></div>'+
+    '<p class="detail-status'+(ready?"":" warn")+'">'+description+'</p>'+
+    sceneMetrics(detailMetric("Toplam günlük "+C.products[animal.product].name.toLocaleLowerCase("tr"),fmt(Math.round(theoreticalRate(s,id)*10)/10)),
+      detailMetric("Irkın hasat aralığı",durations[id]+" sn"))+
+    '<p class="detail-note">'+fmt(b.output)+' '+C.products[animal.product].name+' / hayvan · '+
+      fmt(b.feed)+' '+C.feeds[animal.feed].name+' / hayvan · Sıradaki hasat '+breedWait(s,id)+' sn.</p>',
+    controls:detailJump("Yemlik","Yemliğe Git")};
+}
+function buildingDetail(id) {
+  if(id==="coop"||id==="stable")return herdDetail(id==="stable"?"cows":"hens");
+  if(id==="silo") {
+    const filled=sum(s.feed), max=capacity(s,"silo");
+    return {html:sceneMetrics(detailMetric("Silo kapasitesi",fmt(filled)+" / "+fmt(max)),
+      detailMetric("Doluluk","%"+Math.round(100*filled/max)))+
+      detailList(entries(C.feeds).map(([k,f])=>[feedIcon[k]+" "+f.name,fmt(s.feed[k])+" rasyon"])),
+      controls:button("fill","","Yem Doldur",true)+supplierControl()+detailJump("Yemlik","Yemliğe Git")};
+  }
+  if(id==="barn") {
+    const held=reserved(s), rows=entries(C.products).filter(([id])=>s.stock[id]>0);
+    return {html:sceneMetrics(detailMetric("Ambar kapasitesi",fmt(sum(s.stock)+held)+" / "+fmt(capacity(s,"barn"))),
+      detailMetric("Anlık piyasa değeri",fmt(stockValue())+" 💰"))+
+      ((held-(s.auction?.sale?.quantity||0))>0?'<p class="detail-note">'+(held-(s.auction?.sale?.quantity||0))+' alan atölye siparişine ayrıldı.</p>':"")+
+      (s.auction?.sale?'<p class="detail-note">'+s.auction.sale.quantity+' ürün ihaleye ayrıldı.</p>':"")+
+      (rows.length?detailList(rows.map(([k,p])=>[productIcon[k]+" "+p.name,fmt(s.stock[k])+" adet"])):
+        '<p class="detail-note">Ambar boş.</p>'),
+      controls:detailJump("Pazar","Pazara Git")+button("sellAll","","Hepsini Sat",true)};
+  }
+  if(id==="mill")return {
+    html:'<p class="detail-note">Yel değirmeni çiftliğin tahıl alanına bakıyor.</p>'+
+      sceneMetrics(detailMetric("Yem silosundaki tahıl",fmt(s.feed.grain)),detailMetric("Hava",weather(s)?"Yağmurlu":"Açık")),
+    controls:detailJump("Yemlik","Yemliğe Git")};
+  if(id==="lab")return {
+    html:sceneMetrics(detailMetric("Tamamlanan araştırma",s.research.length+" / "+Object.keys(C.research).length))+
+      '<p class="detail-note">Islah, sürünün verimini ve yem kullanımını iyileştirir.</p>',
+    controls:detailJump("Islah","Islahı Aç")};
+  const job=s.jobs[id], recipes=entries(C.recipes).filter(([,r])=>r.building===id);
+  return {html:'<p class="detail-status">'+(job?C.products[C.recipes[job.recipe].output].name+
+    ' hazırlanıyor · '+job.left+' sn':'Atölye boş')+'</p>'+
+    detailList(recipes.map(([,r])=>[C.products[r.output].name,r.seconds+" sn"])),
+    controls:detailJump("Atölye","Atölyeyi Aç")};
+}
+function renderSceneDetail() {
+  if(!sceneDetail.open||!sceneSelection)return;
+  const data=sceneSelection.animal?animalDetail(sceneSelection.animal):buildingDetail(sceneSelection.building.id);
+  updateHTML("sceneDetailBody",data.html);
+  updateHTML("sceneDetailActions",data.controls);
+}
+function openSceneDetail(selection) {
+  if(!running||reportDialog.open||settings.open||nameDialog.open||valleyDialog.open)return;
+  sceneSelection=selection;
+  const title=selection.animal?C.animals[selection.animal.id].name:
+    signDesign[selection.building.id][1];
+  $("sceneDetailTitle").textContent=title;
+  $("sceneDetailStatus").textContent="";
+  if(!sceneDetail.open)sceneDetail.showModal();
+  renderSceneDetail();
+}
+$("sceneDetailClose").onclick=()=>sceneDetail.close();
+sceneDetail.addEventListener("close",()=>{sceneSelection=null;renderReport();});
+$("sceneDetailActions").onclick=event=>{
+  const view=event.target.closest("[data-view]");
+  if(view){
+    sceneDetail.close();jumpTo(view.dataset.view,view.dataset.filter,true);
+  } else onAction(event);
+};
+$("buildingSigns").onclick=event=>{
+  const sign=event.target.closest("[data-building]");
+  if(!sign)return;
+  const building=sceneBuildings.find(b=>b.id===sign.dataset.building);
+  if(!building?.show(s))return;
+  clearTimeout(detailTimer);sync();save();openSceneDetail({building});
+};
+const canvas=$("farm"), ctx=canvas.getContext("2d");
+const reduceMotion=matchMedia("(prefers-reduced-motion: reduce)");
+const backdrop=document.createElement("canvas");
+backdrop.width=canvas.width; backdrop.height=canvas.height;
+const ground=backdrop.getContext("2d");
+function block(g,color,x,y,w,h) {g.fillStyle=color;g.fillRect(Math.round(x),Math.round(y),w,h);}
+function poly(g,color,points) {
+  g.fillStyle=color;g.beginPath();g.moveTo(...points[0]);
+  for(const p of points.slice(1)) g.lineTo(...p);
+  g.closePath();g.fill();
+}
+function seeded(index) {
+  const n=Math.sin(index*12.9898+78.233)*43758.5453;
+  return n-Math.floor(n);
+}
+function tree(g,x,y,shade) {
+  block(g,"#694b33",x-2,y-10,4,12);
+  block(g,shade,x-10,y-25,19,15);block(g,shade,x-6,y-30,12,23);
+  block(g,"#6b9d57",x-6,y-25,9,7);block(g,"#407c48",x+3,y-19,8,8);
+}
+function paintBackdrop() {
+  const g=ground;
+  block(g,"#83c9d2",0,0,512,190);
+  block(g,"#a9dbd4",0,37,512,28);
+  poly(g,"#7ba6ab",[[0,58],[28,43],[44,43],[58,33],[82,33],[98,47],[122,47],[151,53],[201,45],[232,30],[257,30],[282,48],[311,51],[347,40],[374,40],[390,51],[425,53],[473,40],[496,40],[512,50],[512,78],[0,78]]);
+  poly(g,"#689665",[[0,67],[28,55],[69,55],[92,64],[134,55],[172,55],[214,61],[250,52],[273,52],[302,60],[338,54],[362,62],[407,55],[445,55],[477,58],[512,53],[512,90],[0,90]]);
+  block(g,"#84b859",0,70,512,120);block(g,"#94bf5e",0,113,512,77);block(g,"#a1c769",0,160,512,30);
+  for(let i=1;i<=320;i++) {
+    const x=Math.floor(seeded(i)*511), y=74+Math.floor(seeded(i+500)*115);
+    block(g,i%3===0?"#afd175":"#75ad55",x,y,1+i%4,1);
+    if(i%19===0){block(g,"#548b51",x,y+1,1,3);block(g,i%2?"#fff2a3":"#f9c884",x-1,y,3,1);}
+  }
+  poly(g,"#b58c51",[[0,140],[98,133],[170,134],[222,125],[340,126],[404,118],[512,118],[512,131],[409,132],[340,142],[226,141],[171,150],[96,149],[0,154]]);
+  poly(g,"#d9af6a",[[0,142],[98,135],[169,136],[222,128],[339,128],[404,120],[512,120],[512,129],[408,131],[339,140],[225,139],[170,147],[96,147],[0,152]]);
+  for(let i=0;i<38;i++) {
+    const x=i*14, y=144-x*.04+seeded(i)*5;
+    block(g,"#e8c280",x,y,4,1);
+  }
+  for(const [x,y] of [[11,89],[22,82],[44,78],[105,79],[161,77],[374,82],[467,80],[489,93],[509,79]]) tree(g,x,y,"#4f854a");
+  for(const [x,y,w] of [[24,166,162],[192,174,144],[343,161,145]]) {
+    block(g,"#6d5f36",x,y,w,2);block(g,"#b59056",x,y-4,w,2);
+    for(let j=0;j<=w;j+=16) {
+      block(g,"#785835",x+j,y-7,3,12);block(g,"#d1ac6c",x+j,y-7,1,10);
+    }
+  }
+  for(const [left,right,back,front] of [[24,186,140,166],[192,336,145,174],[343,488,137,161]]) {
+    block(g,"#997646",left,back,right-left,2);
+    for(const x of [left,right]) {
+      block(g,"#8d6b41",x-1,back-3,3,front-back+4);
+      block(g,"#d1ac6c",x-1,back-3,1,front-back+2);
+    }
+    for(let x=left+17;x<right;x+=17)block(g,"#b49054",x,back-3,2,6);
+  }
+  for(let y=151;y<181;y+=6) for(let x=450;x<=493;x+=9) {
+    block(g,"#7c6039",x,y,8,4);block(g,"#e6b64e",x+3,y-3,2,4);
+    block(g,"#578751",x+2,y-1,4,2);
+  }
+}
+const properties=[
+  {id:"coop",x:73,y:119,w:40,name:"Kümes",wall:"#eed390",roof:"#9b4937",show:()=>true},
+  {id:"stable",x:139,y:115,w:51,name:"Ahır",wall:"#cd7151",roof:"#823c3b",show:s=>level(s)>=2},
+  {id:"silo",x:203,y:114,w:20,name:"Silo",wall:"#c5d3c8",roof:"#6e8582",show:s=>s.buildings.silo>0},
+  {id:"barn",x:243,y:118,w:40,name:"Ambar",wall:"#be8751",roof:"#785043",show:s=>s.buildings.barn>0},
+  {id:"dairy",x:307,y:113,w:49,name:"Mandıra",wall:"#eee0b6",roof:"#4e8184",show:s=>s.buildings.dairy>0},
+  {id:"oven",x:380,y:112,w:42,name:"Fırın",wall:"#e5a96a",roof:"#8d4942",show:s=>s.buildings.oven>0},
+  {id:"lab",x:439,y:109,w:41,name:"Islah",wall:"#e2ce9b",roof:"#77739a",show:s=>s.buildings.lab>0}
+];
+const sceneBuildings=[...properties,millProperty];
+const buildingHeight=(b,state)=>b.id==="silo"?34+Math.min(10,((state.buildings.silo||1)-1)*2):23;
+function drawBuilding(g,b,s,t,night) {
+  const {x,y,w}=b;
+  const h=buildingHeight(b,s);
+  const left=x-(w>>1), top=y-h;
+  block(g,"#60884a",left-5,y-2,w+12,6);
+  block(g,"#584736",left,top,w,h);block(g,b.wall,left+2,top,w-4,h-2);
+  block(g,"#fff1ca",left+2,top+2,2,h-4);
+  for(let i=top+7;i<y-2;i+=5) block(g,"#352b2927",left+3,i,w-6,1);
+  poly(g,"#503e34",[[left-5,top+2],[x-4,top-15],[x+4,top-15],[left+w+5,top+2]]);
+  poly(g,winter(s)?"#ecf1ea":b.roof,[[left-2,top],[x-3,top-13],[x+3,top-13],[left+w+2,top]]);
+  if(winter(s))block(g,"#b1cbd0",left,top-1,w,2);
+  block(g,"#ffffff38",left+1,top-2,w-2,1);
+  block(g,"#5d4a3d",x-5,y-13,10,13);block(g,"#845e43",x-3,y-11,6,11);
+  if(w>27) {
+    for(const wx of [left+6,left+w-13]) {
+      if(night)block(g,"#ffcb724c",wx-3,top+4,13,13);
+      block(g,"#76543b",wx,top+7,7,7);block(g,night?"#fff29e":"#ceaf76",wx+1,top+8,5,5);
+      block(g,"#956f4e",wx+3,top+8,1,5);
+    }
+  }
+  if(b.id==="oven"||b.id==="dairy") {
+    block(g,b.roof,left+w-9,top-16,5,13);
+    if(s.jobs[b.id]) for(let i=0;i<3;i++) {
+      const phase=(t*9+i*9)%24;
+      block(g,"#f5e8c399",left+w-10+phase*.35,top-17-phase,4,3);
+    }
+  }
+  if(hotScene?.building?.id===b.id)outlineBuilding(g,b);
+}
+const breedArt={
+  manisa:{coat:"#edb65d",light:"#ffe0a0",wing:"#b97d41",tail:"#c38442",comb:"#b93e32",style:"hen"},
+  mersin:{coat:"#b66c3d",light:"#e59a58",wing:"#8e4f36",tail:"#6a4233",comb:"#c05033",style:"hen"},
+  zibrit:{coat:"#d99540",light:"#f8cf72",wing:"#5d4638",tail:"#503728",comb:"#b73a38",style:"laced"},
+  denizli:{coat:"#272a2e",light:"#555159",wing:"#22212b",tail:"#293b3e",comb:"#e7443d",style:"rooster"},
+  endulus:{coat:"#748da5",light:"#a7bfd0",wing:"#556b90",tail:"#4b5b80",comb:"#cd5354",style:"hen"},
+  habes:{coat:"#fff8ed",light:"#ffffff",wing:"#ddd7ce",tail:"#fffaf4",comb:"#dcc7ba",style:"fluff"},
+  anadolu:{coat:"#8d8c80",light:"#b7ad98",wing:"#6a6a63",face:"#a79d90",horn:"#dfccaa",style:"native",body:19},
+  simental:{coat:"#ecdfbd",light:"#ffefda",wing:"#ad692e",face:"#fff5df",horn:"#d6b087",style:"patch",body:22},
+  angus:{coat:"#292a2c",light:"#474348",wing:"#202224",face:"#28292c",horn:"",style:"heavy",body:23},
+  jersey:{coat:"#c3985b",light:"#ead49f",wing:"#92643c",face:"#c09864",horn:"#dec08d",style:"slim",body:18},
+  holstein:{coat:"#f8f3e6",light:"#fffdf4",wing:"#22272b",face:"#f8f1df",horn:"#dfca9a",style:"patch",body:21},
+  goldBreed:{coat:"#e9ae43",light:"#ffe6a1",wing:"#644933",face:"#fff0bd",horn:"#d59948",style:"patch",body:22},
+  saanen:{coat:"#fff9e5",light:"#fffdf6",wing:"#d2cab8",face:"#fffbeb",horn:"#aa936a",style:"goat",body:15},
+  kafkas:{wood:"#a76c3b",light:"#edb75e",roof:"#a05836",style:"stack"},
+  carniola:{wood:"#8e6145",light:"#deb27b",roof:"#7796a2",style:"gable"}
+};
+function spriteParts(id,frame=0) {
+  const p=breedArt[id], animal=C.animals[id], parts=[];
+  const rect=(color,x,y,w,h)=>parts.push([color,x,y,w,h]);
+  if(animal.feed==="syrup") {
+    rect("#684932",-8,0,16,2);rect("#8f6941",-6,-1,2,4);rect("#8f6941",5,-1,2,4);
+    rect("#684932",-8,-12,16,12);rect(p.wood,-7,-12,14,11);
+    for(const y of [-10,-7,-4])rect(p.light,-6,y,12,1);
+    if(p.style==="gable") {
+      rect(p.roof,-10,-13,20,2);rect(p.roof,-7,-15,14,2);rect(p.roof,-4,-17,8,2);
+    } else {
+      rect(p.roof,-10,-13,20,2);rect(p.light,-8,-15,16,2);
+    }
+    rect("#4b382e",-2,-4,5,3);rect("#da9d5b",-3,-1,8,1);
+    return parts;
+  }
+  if(animal.feed==="grain") {
+    const rooster=p.style==="rooster", fluff=p.style==="fluff", shift=frame?1:0;
+    rect("#82552e",-3+shift,-2,1,3);rect("#82552e",3-shift,-2,1,3);
+    rect(p.tail,-8,-10,6,6);rect(p.tail,-9,-13,3,5);
+    if(rooster) {
+      rect(p.tail,-10,-16,3,6);rect(p.tail,-8,-17,5,2);rect("#3e5051",-7,-14,4,2);
+    }
+    rect(p.wing,-7,-9-shift,13,7);
+    rect(p.coat,-6,-11-shift,12,8);
+    rect(p.light,-4,-11-shift,6,2);
+    rect(p.wing,-3,-8-shift,6,3);
+    if(p.style==="laced")for(const [x,y] of [[-4,-9],[-2,-7],[0,-8],[-5,-5]])rect(p.light,x,y-shift,1,1);
+    if(fluff) {
+      rect(p.coat,-8,-10-shift,4,5);rect(p.coat,-5,-4-shift,10,2);
+      rect(p.light,1,-15-shift,6,4);rect(p.light,-2,-12-shift,7,3);
+    }
+    const headY=rooster?-17:-14;
+    rect(p.coat,4,headY-shift,5,8);rect(p.light,5,headY-shift,3,2);
+    rect(p.comb,4,headY-1-shift,5,2);
+    if(rooster){rect(p.comb,4,headY-3-shift,2,3);rect(p.comb,7,headY-3-shift,2,3);rect(p.comb,8,headY+6-shift,2,3);}
+    rect(rooster?"#ffc45c":"#e4a143",9,headY+3-shift,3,2);rect("#493b31",7,headY+2-shift,1,1);
+    return parts;
+  }
+  const goat=p.style==="goat", heavy=p.style==="heavy", headX=Math.floor(p.body/2)-1;
+  const height=heavy?11:p.style==="slim"||goat?8:10, top=-height-5;
+  const lean=frame===2?4:0, stride=frame===1?1:0;
+  rect(p.wing,-headX+stride,-6,2,7);rect(p.wing,headX-3-stride,-6,2,7);
+  rect(p.light,-headX-1,top+1,p.body,height-1);rect(p.coat,-headX,top,p.body-2,height);
+  rect(p.coat,-headX+2,top-1,p.body-5,2);
+  rect(p.light,-headX+1,top+1,p.body-5,1);
+  rect(p.wing,-headX-3,top+1,2,goat?3:8);
+  if(p.style==="patch"){
+    rect(p.wing,-headX+2,top+1,5,5);rect(p.wing,-headX+4,top+5,5,2);
+    rect(p.wing,headX-4,top+2,5,6);rect(p.wing,headX-6,top+5,4,2);
+  } else rect(p.wing,-headX+1,top+height-2,p.body-5,2);
+  const headY=top-2+lean;
+  rect(p.face,headX-1,headY,goat?6:8,8);
+  rect(p.light,headX,headY,goat?5:6,1);
+  rect(p.wing,headX-2,headY+1,2,3);
+  rect(heavy?"#4b4648":goat?"#e4cabe":"#bc8e76",headX+2,headY+5,goat?4:7,3);
+  rect("#211f23",headX+3,headY+2,1,1);
+  if(goat) {
+    rect(p.coat,headX-1,headY-5,2,6);rect(p.coat,headX+5,headY-5,2,6);
+    rect("#d4a998",headX+5,headY-3,1,3);rect(p.wing,headX+4,headY+8,2,4);
+  } else if(p.horn){
+    rect(p.horn,headX-1,headY-2,2,3);rect(p.horn,headX+4,headY-2,2,3);
+  }
+  return parts;
+}
+const breedSprites=Object.fromEntries(ids.map(id=>[id,[0,1,2].map(frame=>spriteParts(id,frame))]));
+const breedIcons=Object.fromEntries(ids.map(id=>{
+  const pixels=breedSprites[id][0].map(([fill,x,y,width,height])=>
+    '<rect x="'+x+'" y="'+y+'" width="'+width+'" height="'+height+'" fill="'+fill+'"/>').join("");
+  return [id,'<svg viewBox="-17 -23 38 28" aria-hidden="true" focusable="false">'+pixels+'</svg>'];
+}));
+const animalPens={
+  kafkas:[17,109],carniola:[42,126],
+  manisa:[65,147],mersin:[86,158],zibrit:[106,147],denizli:[129,160],
+  endulus:[151,147],habes:[170,157],
+  anadolu:[207,154],simental:[239,165],angus:[266,152],jersey:[295,164],
+  holstein:[322,151],saanen:[360,155],goldBreed:[405,143]
+};
+function flockActors(s) {
+  const actors=[];
+  for(const [species,id] of ids.entries()) {
+    const a=C.animals[id], count=s.animals[id], shown=Math.min(count,1), [x,y]=animalPens[id];
+    for(let i=0;i<shown;i++) {
+      const seed=species*277+i*17+1;
+      const offset=i===0?0:i%2?6+i*2:-(6+i*2);
+      actors.push({id,a,index:i,seed,x:x+offset,y:y+(i?6+i%3*4:0),
+        rest:i===shown-1?count-shown:0});
+    }
+  }
+  return actors.sort((a,b)=>a.y-b.y);
+}
+function drawActor(g,actor,t) {
+  const {id,a,seed}=actor, hive=a.feed==="syrup", bird=a.feed==="grain";
+  const phase=t*(.85+seeded(seed+3)*.36)+seed*.9;
+  const roam=hive?0:bird?4:6;
+  const x=Math.round(actor.x+Math.sin(phase)*roam);
+  const baseY=Math.round(actor.y+(hive?0:Math.cos(phase*1.3)*2));
+  const since=performance.now()-(actor.jumpAt??-1000);
+  const jump=!reduceMotion.matches&&since<490?Math.sin(since/490*Math.PI)*8:0;
+  const y=Math.round(baseY-jump);
+  const scale=bird||a.product==="milk"?1.3:1;
+  actor.hit={x,y,w:Math.ceil((bird?11:hive?13:15)*scale),height:Math.ceil((bird?21:19)*scale)};
+  const frame=!hive&&!bird&&Math.sin(phase*.62)>.30?2:Math.floor(t*7+seed)%2;
+  const shadow=Math.round((bird?6:10)*scale);
+  block(g,"#3e69489d",x-shadow,baseY+2,shadow*2,2);
+  g.save();g.translate(x,y);if(!hive&&Math.cos(phase)<0)g.scale(-1,1);
+  if(hotScene?.animal===actor) {
+    g.shadowColor="#ffe293";g.shadowBlur=5;
+    g.shadowOffsetX=.5;g.shadowOffsetY=-.5;
+  }
+  // Round both ends to preserve shared pixel edges at 1.3×.
+  for(const [color,px,py,width,height] of breedSprites[id][frame]) {
+    const left=Math.round(px*scale),top=Math.round(py*scale);
+    block(g,color,left,top,Math.round((px+width)*scale)-left,Math.round((py+height)*scale)-top);
+  }
+  g.shadowColor="transparent";
+  if(hive)for(let i=0;i<4;i++) {
+    const angle=phase*3.5+i*Math.PI/2;
+    const bx=Math.sin(angle)*(13+i), by=-11+Math.cos(angle)*(7+i/2);
+    block(g,"#42342b",bx,by,4,2);block(g,"#ffdc55",bx+1,by,2,2);
+    block(g,"#fff2ba",bx-1,by-1,2,1);
+  }
+  g.restore();
+
+}
+function skyState(seconds) {
+  const minute=seconds%240;
+  if(minute<100)return {name:"Gündüz",night:false,tint:"",sky:""};
+  if(minute<150)return {name:"Gün batımı",night:false,tint:"#ef813937",sky:"#ec995b"};
+  if(minute<220)return {name:"Gece",night:true,tint:"#132652a6",sky:"#202d52"};
+  return {name:"Şafak",night:false,tint:"#be758037",sky:"#bd96a8"};
+}
+function drawSky(g,sky,rain,t) {
+  if(sky.sky) {
+    block(g,sky.sky,0,0,512,29);
+    block(g,sky.night?"#303a61":sky.name==="Şafak"?"#c3a0ac":"#f2ac6c",0,29,512,1);
+  }
+  if(sky.night) {
+    for(let i=0;i<23;i++) {
+      const x=52+seeded(i+305)*450, y=4+seeded(i+829)*22;
+      block(g,i%5===0?"#fff1b2":"#c4d5ee",x,y,i%5===0?2:1,1);
+      if(i%5===0)block(g,"#dbe9ef",x+.5,y-1,1,3);
+    }
+    block(g,"#ebecb9",418,10,16,17);block(g,"#ebecb9",415,14,20,8);
+    block(g,sky.sky,425,8,11,13);block(g,sky.sky,429,20,9,3);
+  } else if(!rain) {
+    const y=sky.name==="Gün batımı"?43:sky.name==="Şafak"?37:15;
+    block(g,sky.name==="Gün batımı"?"#ffd275":"#ffdf87",409,y,26,24);
+    block(g,"#ffe69a",406,y+4,32,16);
+  }
+  for(const [i,y] of (sky.night?[25,37]:[24,38,19]).entries()) {
+    const x=((72+155*i+t*2.8)%560)-24;
+    const upper=rain?"#a8bdc5":sky.night?"#495276":sky.name==="Gün batımı"?"#ffe0a6":"#f5f6df";
+    block(g,upper,x,y+5,38,3);block(g,upper,x+5,y+2,26,6);block(g,upper,x+11,y,13,4);
+  }
+}
+function drawRain(g,t) {
+  block(g,"#38547c25",0,0,512,190);
+  for(let i=0;i<58;i++) {
+    const speed=53+seeded(i+182)*32;
+    const x=(seeded(i+110)*512+550-t*15%550+550)%550;
+    const y=(seeded(i+410)*194+t*speed)%194;
+    block(g,"#e2f4f593",x,y,1,3);block(g,"#c6e9e39e",x-1,y+3,1,2);
+    if(y>150&&i%7===0)block(g,"#bddee2ab",x-3,y+5,4,1);
+  }
+}
+let farmActors=[], farmSignature="", lastFrame=-100;
+function windmill(g,t,night) {
+  const x=465,y=107, hubY=73;
+  block(g,"#526a3a95",x-24,y-1,48,6);
+  poly(g,"#604637",[[x-17,y],[x-10,hubY],[x+10,hubY],[x+16,y]]);
+  poly(g,"#b98b57",[[x-14,y-2],[x-8,hubY+2],[x+8,hubY+2],[x+13,y-2]]);
+  for(let i=hubY+6;i<y-2;i+=5)block(g,"#805e43",x-8,i,16,1);
+  poly(g,winter(s)?"#eef3ea":"#784d3e",[[x-13,hubY+2],[x,hubY-11],[x+13,hubY+2]]);
+  block(g,night?"#ffe688":"#665047",x-3,y-18,6,6);
+  block(g,"#5b3e31",x-4,y-10,8,9);
+  g.save();g.translate(x,hubY);
+  g.rotate(t*.44+Math.PI/8);
+  for(let i=0;i<4;i++){
+    block(g,"#6d4b2e",-2,-27,4,28);
+    block(g,"#b9814c",-8,-26,7,19);
+    for(let k=-25;k<-9;k+=4)block(g,"#ecc382",-7,k,5,2);
+    g.rotate(Math.PI/2);
+  }
+  g.restore();block(g,"#573f30",x-3,hubY-3,6,6);block(g,"#e2b574",x-1,hubY-1,3,3);
+}
+function pond(g,t,night) {
+  const banks=[[378,157],[386,150],[403,147],[427,148],[441,154],[447,161],
+    [443,169],[431,175],[405,177],[388,174],[376,166]];
+  poly(g,night?"#4a6754":"#819752",banks);
+  const water=banks.map(([x,y])=>[411+(x-411)*.91,162+(y-162)*.83]);
+  poly(g,night?"#37627b":"#5babb2",water);
+  for(let i=0;i<11;i++){
+    const x=384+seeded(i+81)*51,y=153+seeded(i+175)*16;
+    block(g,night?"#6b979e":"#96d5ce",x+(Math.sin(t*1.3+i)*2),y,2+(i%4),1);
+  }
+  for(let i=0;i<3;i++){
+    const phase=t*.66+i*2.18, x=411+Math.sin(phase)*(19-i*3),y=160+Math.cos(phase)*5+i;
+    const direction=Math.cos(phase)>0?1:-1;
+    block(g,"#a7dcce",x-6*direction,y+3,5,1);
+    block(g,i===2?"#e4b45f":"#eee7c0",x-3,y,7,3);
+    block(g,i===2?"#dfbf73":"#f7edcd",x+direction*3-1,y-2,3,3);
+    block(g,"#e09c45",x+direction*5-1,y-1,2,1);
+  }
+  block(g,"#4c8353",382,167,3,6);block(g,"#679b55",386,170,3,5);
+  block(g,"#5e8e58",434,174,4,4);
+}
+function dairySmoke(g,t,night) {
+  for(let i=0;i<4;i++){
+    const life=(t*9+i*7)%28;
+    const x=324+life*.65,y=73-life;
+    block(g,night?"#d7d7ce68":"#fff2d3a6",x,y,3+Math.round(life/8),3);
+    block(g,night?"#adc4d35c":"#d3c5a379",x+2,y+3,3+Math.round(life/13),1);
+  }
+}
+function drawSnow(g,seconds,night) {
+  for(let i=0;i<42;i++) {
+    const y=(seeded(i+377)*204+seconds*(9+i%5))%204;
+    const drift=Math.sin(seconds*.7+i)*6;
+    const x=(seeded(i+812)*512+drift+512)%512;
+    block(g,night?"#cfdfebac":"#ffffffdb",x,y,i%7===0?2:1,i%7===0?2:1);
+  }
+}
+function drawTruck(g,d) {
+  const progress=Math.max(0,Math.min(1,(s.farmTime-d.start+(performance.now()%1000)/1000)/(d.arrive-d.start)));
+  const x=Math.round(20+progress*468),y=125;
+  block(g,"#514b35",x-16,y+1,33,3);
+  block(g,"#6c4334",x-16,y-10,26,10);block(g,"#cf8650",x-15,y-11,21,9);
+  for(let i=-12;i<8;i+=5)block(g,"#e9a86a",x+i,y-10,1,7);
+  block(g,"#335f5a",x+7,y-13,11,14);block(g,"#bfe2cb",x+10,y-12,6,5);
+  block(g,"#e2a65b",x+17,y-3,2,2);
+  for(const wx of [x-12,x+12]) {
+    block(g,"#44362d",wx-3,y-1,6,6);block(g,"#c4955a",wx-1,y+1,2,2);
+  }
+}
+function syncBadges() {
+  const html=farmActors.filter(a=>a.hit&&s.animals[a.id]>1).map(a=>
+    '<span class="herd-count" style="--bx:'+100*a.hit.x/512+'%;--by:'+100*(a.hit.y-a.hit.height)/190+'%">x'+fmt(s.animals[a.id])+'</span>').join("");
+  updateHTML("herdBadges",html);
+}
+function paintFarm(ms) {
+  requestAnimationFrame(paintFarm);
+  if(!s||document.hidden||ms-lastFrame<55) return;
+  const sky=skyState(s.farmTime), rain=weather(s), snow=winter(s);
+  const signature=sky.name+Boolean(rain)+snow+s.deliveries.map(d=>d.arrive).join(",")+entries(s.jobs).map(([k])=>k).join(",");
+  if(reduceMotion.matches&&sceneStill&&signature===climateSignature) return;
+  climateSignature=signature;lastFrame=ms;sceneStill=true;
+  const t=reduceMotion.matches?0:ms/1000;
+  ctx.drawImage(backdrop,0,0);
+  if(snow)block(ctx,"#e0f4ec66",0,65,512,125);
+  if(sky.tint)block(ctx,sky.tint,0,0,512,190);
+  drawSky(ctx,sky,rain,t);
+  for(const b of properties) if(b.show(s)) drawBuilding(ctx,b,s,t,sky.night);
+  windmill(ctx,t,sky.night);
+  if(hotScene?.building?.id==="mill")outlineBuilding(ctx,millProperty);
+  pond(ctx,t,sky.night);
+  if(s.buildings.dairy)dairySmoke(ctx,t,sky.night);
+  if(s.deliveries.length)drawTruck(ctx,s.deliveries.reduce((a,b)=>a.arrive<b.arrive?a:b));
+  for(const actor of farmActors) drawActor(ctx,actor,t);
+  syncBadges();
+  if(snow)drawSnow(ctx,t,sky.night);
+  else if(rain)drawRain(ctx,t);
+}
+let sceneStill=false, climateSignature="";
+paintBackdrop();requestAnimationFrame(paintFarm);
+reduceMotion.addEventListener("change",()=>{sceneStill=false;});
+function buildingBounds(b) {
+  if(b.id==="mill")return {left:b.x-25,right:b.x+25,top:52,bottom:b.y+2,wall:72};
+  const top=b.y-buildingHeight(b,s);
+  return {left:b.x-b.w/2-3,right:b.x+b.w/2+3,top:top-15,bottom:b.y+1,wall:top};
+}
+function outlineBuilding(g,b) {
+  const h=buildingBounds(b);
+  g.save();g.strokeStyle="#ffe38e";g.lineWidth=1.3;g.shadowColor="#ffda74";g.shadowBlur=5;
+  g.beginPath();
+  g.moveTo(h.left,h.bottom);g.lineTo(h.left,h.wall);
+  g.lineTo(b.x-4,h.top);g.lineTo(b.x+4,h.top);
+  g.lineTo(h.right,h.wall);g.lineTo(h.right,h.bottom);g.closePath();g.stroke();g.restore();
+}
+function scenePoint(event) {
+  const rect=canvas.getBoundingClientRect();
+  return {x:(event.clientX-rect.left)*canvas.width/rect.width,
+    y:(event.clientY-rect.top)*canvas.height/rect.height};
+}
+function sceneHit(event) {
+  const {x,y}=scenePoint(event);
+  let best=null, distance=Infinity;
+  for(const actor of farmActors) {
+    const hit=actor.hit;
+    if(!hit||Math.abs(x-hit.x)>hit.w||y<hit.y-hit.height||y>hit.y+4)continue;
+    const d=(x-hit.x)**2+(y-hit.y+hit.height/2)**2;
+    if(d<=distance){best=actor;distance=d;}
+  }
+  if(best)return {animal:best};
+  for(const building of sceneBuildings) {
+    if(!building.show(s))continue;
+    const b=buildingBounds(building);
+    if(y<b.top||y>b.bottom||x<b.left||x>b.right)continue;
+    const roofWidth=4+(b.right-building.x-4)*(y-b.top)/(b.wall-b.top);
+    if(y<b.wall&&Math.abs(x-building.x)>roofWidth&&building.id!=="mill")continue;
+    return {building};
+  }
+  return null;
+}
+function setSceneHover(target) {
+  if(hotScene?.animal===target?.animal&&hotScene?.building===target?.building)return;
+  hotScene=target;sceneStill=false;
+  canvas.style.cursor=target?"pointer":"default";
+  for(const sign of $("buildingSigns").children)
+    sign.classList.toggle("is-lit",hotScene?.building?.id===sign.dataset.building);
+}
+function showHeart(actor) {
+  if(!actor.hit)return;
+  const heart=document.createElement("span");
+  heart.textContent="❤️";
+  heart.className="scene-heart";heart.setAttribute("aria-hidden","true");
+  heart.style.setProperty("--heart-x",100*actor.hit.x/canvas.width+"%");
+  heart.style.setProperty("--heart-y",100*Math.max(12,actor.hit.y-actor.hit.height-5)/canvas.height+"%");
+  $("stage").append(heart);setTimeout(()=>heart.remove(),950);
+}
+function petAnimal(actor,event) {
+  if(!actor||!running)return;
+  sync();
+  actor.jumpAt=performance.now();sceneStill=false;
+  showHeart(actor);
+  play("pet");
+  const labels=[animalIcon(actor.a)+" ♥"];
+  if(s.farmTime>=s.petReady) {
+    const canStore=sum(s.feed)<capacity(s,"silo");
+    if(canStore&&datedRandom(s.worldSeed,s.farmTime,733)<.5) {
+      s.feed.grain++;labels.push("🌾 +1 Tahıl");
+    } else {
+      credit(s,2);labels.push("💰 +2 Akçe");
+    }
+    s.petReady=s.farmTime+PET_COOLDOWN;
+    $("notice").textContent="Hayvan ziyareti · "+labels[1];
+  } else $("notice").textContent="Bir sonraki hayvan sürprizi "+(s.petReady-s.farmTime)+" sn sonra.";
+  const point=event?{x:event.clientX,y:event.clientY}:null;
+  floating(canvas,labels,point);
+  if(labels.length>1)celebrate();
+  else if(typeof navigator.vibrate==="function")navigator.vibrate(12);
+  save();render();
+}
+let detailTimer;
+function inspectAnimal(actor,event) {
+  petAnimal(actor,event);
+  clearTimeout(detailTimer);
+  detailTimer=setTimeout(()=>openSceneDetail({animal:actor}),reduceMotion.matches?0:320);
+}
+canvas.addEventListener("pointermove",event=>{if(running&&event.pointerType!=="touch")setSceneHover(sceneHit(event));});
+canvas.addEventListener("pointerleave",()=>setSceneHover(null));
+canvas.addEventListener("click",event=>{
+  if(!running)return;
+  const target=sceneHit(event);
+  clearTimeout(detailTimer);
+  if(target?.animal){inspectAnimal(target.animal,event);return;}
+  if(target?.building){sync();save();openSceneDetail(target);}
+});
+$("buildingSigns").addEventListener("pointerover",event=>{
+  const id=event.target.closest("[data-building]")?.dataset.building;
+  if(id)setSceneHover({building:sceneBuildings.find(b=>b.id===id)});
+});
+$("buildingSigns").addEventListener("pointerout",event=>{
+  if(!event.relatedTarget?.closest?.("[data-building]"))setSceneHover(null);
+});
+let visitIndex=0;
+$("visitAnimal").onclick=()=>{if(farmActors.length)inspectAnimal(farmActors[visitIndex++%farmActors.length]);};
+function appIdentity() {
+  const art=document.createElement("canvas"), g=art.getContext("2d");
+  function icon(size){
+    art.width=art.height=size;
+    g.scale(size/64,size/64);
+    g.fillStyle="#214934";g.fillRect(0,0,64,64);
+    g.fillStyle="#81b16e";g.fillRect(0,29,64,35);
+    g.fillStyle="#f3bc5e";g.fillRect(44,10,9,9);
+    g.fillStyle="#5d3b2b";g.fillRect(15,34,34,21);
+    g.fillStyle="#bb6c46";g.fillRect(18,35,28,17);
+    g.fillStyle="#f3bc5e";g.fillRect(20,38,8,8);g.fillRect(38,38,5,8);
+    g.fillStyle="#573b31";g.fillRect(30,43,7,12);
+    poly(g,"#f2d69c",[[12,35],[30,18],[35,18],[52,35]]);
+    return art.toDataURL("image/png");
+  }
+  const links=(rel,href)=>{
+    const link=document.createElement("link");link.rel=rel;link.href=href;document.head.append(link);
+  };
+  links("icon",icon(192));links("apple-touch-icon",icon(180));
+  if(location.protocol==="file:")return;
+  const url=new URL(location.href);url.hash="";url.search="";
+  const manifest={id:url.href,start_url:url.href,scope:new URL(".",url).href,name:"Bozkır Çiftliği",
+    short_name:"Bozkır",lang:"tr",display:"standalone",orientation:"any",
+    background_color:"#eee0b9",theme_color:"#15382f",
+    icons:[192,512].map(size=>({src:icon(size),sizes:size+"x"+size,type:"image/png",purpose:"any"}))};
+  links("manifest","data:application/manifest+json,"+encodeURIComponent(JSON.stringify(manifest)));
+}
+appIdentity();
+const PROFILE_PREFIX="bozkir-profile-v1:", ACTIVE_PROFILE="bozkir-active-profile";
+const profileGate=$("profileGate"), profileForm=$("profileForm");
+const accountKey=id=>PROFILE_PREFIX+"account:"+id;
+const saveKey=id=>PROFILE_PREFIX+"farm:"+id;
+function readAccount(id) {
+  if(typeof id!=="string"||!/^[a-z0-9_%.-]{2,225}$/i.test(id))return null;
+  const account=JSON.parse(localStorage.getItem(accountKey(id))||"null");
+  return account&&typeof account.name==="string"&&/^[0-9a-f]{32}$/.test(account.salt)&&
+    /^[0-9a-f]{64}$/.test(account.verifier)?account:null;
+}
+const hex=bytes=>Array.from(bytes,b=>b.toString(16).padStart(2,"0")).join("");
+async function passwordProof(password,salt) {
+  if(!crypto.subtle)throw Error("Şifre doğrulama için yerel dosyayı veya HTTPS adresini aç.");
+  const key=await crypto.subtle.importKey("raw",new TextEncoder().encode(password),"PBKDF2",false,["deriveBits"]);
+  const rawSalt=new Uint8Array(salt.match(/../g).map(byte=>parseInt(byte,16)));
+  return hex(new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",salt:rawSalt,
+    iterations:210000,hash:"SHA-256"},key,256)));
+}
+function openProfile(id,account) {
+  if(running)return;
+  KEY=saveKey(id);
+  $("profileLabel").textContent=account.name;
+  const launch=()=>{if(profileGate.open)profileGate.close();start();};
+  if(navigator.locks) navigator.locks.request(KEY,{ifAvailable:true},async lock=>{
+    if(!lock){
+      sessionStorage.removeItem(ACTIVE_PROFILE);
+      $("profileError").textContent="Bu profil başka bir sekmede açık.";
+      if(!profileGate.open)profileGate.showModal();
+      return;
+    }
+    launch();await new Promise(()=>{});
+  }).catch(()=>{if(!running)launch();});
+  else launch();
+}
+profileGate.addEventListener("cancel",e=>e.preventDefault());
+profileForm.onsubmit=async event=>{
+  event.preventDefault();
+  const mode=event.submitter?.value||"login", name=$("profileName").value.trim().normalize("NFKC");
+  const password=$("profilePassword").value;
+  $("profileError").textContent="";
+  if(!/^[\p{L}\p{N}_.-]{2,24}$/u.test(name)){
+    $("profileError").textContent="Kullanıcı adı 2–24 harf, rakam, nokta, tire veya alt çizgi olabilir.";return;
+  }
+  const id=encodeURIComponent(name.toLocaleLowerCase("tr-TR"));
+  const buttons=[...profileForm.querySelectorAll("button")];
+  buttons.forEach(b=>b.disabled=true);
+  try {
+    let account=readAccount(id);
+    if(mode==="register"){
+      if(account)throw Error("Bu kullanıcı adı bu tarayıcıda zaten kayıtlı.");
+      if(password.length<6)throw Error("Şifre en az 6 karakter olmalı.");
+      const salt=hex(crypto.getRandomValues(new Uint8Array(16)));
+      account={name,salt,verifier:await passwordProof(password,salt)};
+      if(readAccount(id))throw Error("Bu kullanıcı adı bu tarayıcıda zaten kayıtlı.");
+      const old=localStorage.getItem(LEGACY_KEY), migrated=PROFILE_PREFIX+"legacy-owner";
+      let copied=false;
+      try{
+        if(old&&!localStorage.getItem(migrated)){
+          const state=JSON.parse(old);
+          if(valid(state)){
+            localStorage.setItem(saveKey(id),old);copied=true;localStorage.setItem(migrated,id);
+          }
+        }
+        localStorage.setItem(accountKey(id),JSON.stringify(account));
+      } catch(error){
+        if(copied){localStorage.removeItem(saveKey(id));localStorage.removeItem(migrated);}
+        throw error;
+      }
+    } else if(!account||await passwordProof(password,account.salt)!==account.verifier){
+      throw Error("Kullanıcı adı veya şifre yanlış.");
+    }
+    $("profilePassword").value="";
+    sessionStorage.setItem(ACTIVE_PROFILE,id);
+    openProfile(id,account);
+  } catch(error) {
+    $("profileError").textContent=error.message||"Profil açılamadı. Tarayıcı depolamasını kontrol et.";
+  } finally {buttons.forEach(b=>b.disabled=false);}
+};
+$("profileSwitch").onclick=()=>{
+  if(running){sync();save();running=false;}
+  sessionStorage.removeItem(ACTIVE_PROFILE);location.reload();
+};
+$("fullFarm").onclick=async ()=>{
+  try{
+    if(document.fullscreenElement){await document.exitFullscreen();return;}
+    if(!document.documentElement.requestFullscreen)throw Error();
+    await document.documentElement.requestFullscreen();
+    try{await screenOrientationLock();}catch{}
+  }catch{
+    $("notice").textContent="Yatay görünüm için cihazı döndür veya oyunu ana ekrandan aç.";
+  }
+};
+function screenOrientationLock(){
+  return window.screen.orientation?.lock?.("landscape");
+}
+try {
+  const id=sessionStorage.getItem(ACTIVE_PROFILE), account=readAccount(id);
+  if(account)openProfile(id,account);
+  else profileGate.showModal();
+} catch {
+  profileGate.showModal();
+  $("profileError").textContent="Profil için tarayıcı depolamasını etkinleştir.";
+}
+
+</script>
+</body>
+</html>
