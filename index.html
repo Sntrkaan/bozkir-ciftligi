@@ -238,6 +238,35 @@ body.winter{background-color:#e9eddd}
   .mobile-quest{display:none}
   .panel-inner{padding:6px}
 }
+/* === YENİ MODÜLLER (HARA, BANKA, LÜKS, İHRACAT, ANLAŞMALAR) === */
+.sub-grid{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.badge-org{display:inline-block;background:#2e6847;color:#fff8dd;font:800 10px ui-monospace,monospace;padding:2px 5px;border-radius:3px;vertical-align:middle}
+.badge-hot{display:inline-block;background:#c47a27;color:#fff8dd;font:800 10px ui-monospace,monospace;padding:2px 5px;border-radius:3px;vertical-align:middle}
+.nego-box{margin-top:8px;padding:8px;background:#f8ebd0;border:1px solid #c9b384;border-radius:4px;display:grid;gap:6px}
+.nego-row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:12px}
+.nego-box input[type="range"]{width:100%;accent-color:#2e6847;cursor:pointer}
+.chance-pill{display:inline-block;padding:2px 7px;border-radius:4px;font:800 12px ui-monospace,monospace}
+.chance-high{background:#d4edda;color:#155724;border:1px solid #88c094}
+.chance-mid{background:#fff3cd;color:#856404;border:1px solid #e0c163}
+.chance-low{background:#f8d7da;color:#721c24;border:1px solid #d98e96}
+.lb-table{width:100%;border-collapse:collapse;font-size:13px}
+.lb-table th,.lb-table td{padding:6px 8px;border-bottom:1px solid #d9c79b;text-align:left}
+.lb-table th{background:#ead8ab;font:800 11px ui-monospace,monospace;text-transform:uppercase}
+.lb-table tr.me{background:#e4f0cc;font-weight:800}
+.race-track{display:grid;gap:8px;margin:10px 0}
+.race-lane{background:#e5efc8;border:2px solid #8b9f61;border-radius:5px;padding:6px 8px}
+.race-lane-head{display:flex;justify-content:space-between;font:700 12px ui-monospace,monospace;margin-bottom:4px}
+.race-bar{position:relative;height:18px;background:#c8b07b;border-radius:3px;overflow:hidden}
+.race-runner{position:absolute;top:0;left:0;font-size:15px;line-height:18px;transition:left .12s linear}
+.credit-bar{height:10px;border-radius:5px;background:linear-gradient(90deg,#c94a3c 0%,#e6a63c 50%,#2e7d47 100%);position:relative;margin:4px 0}
+.credit-pin{position:absolute;top:-3px;width:6px;height:16px;background:#183b30;border:1px solid #fff8dd;border-radius:2px;transform:translateX(-50%)}
+.sb-box{background:#fff8df;border:1px solid #c6a573;border-radius:5px;padding:9px;display:grid;gap:6px}
+.sb-box input{font:inherit;font-size:12px;width:100%;padding:6px;border:1px solid var(--line);border-radius:4px;background:#fffdf4;color:var(--ink)}
+@media(max-width:760px){
+  #tabs{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch;gap:4px!important;padding:6px 6px calc(6px + env(safe-area-inset-bottom))!important}
+  #tabs button{flex:0 0 auto;min-width:66px;padding:5px 6px}
+  .sub-grid{grid-template-columns:1fr}
+}
 
 </style>
 </head>
@@ -291,6 +320,13 @@ body.winter{background-color:#e9eddd}
       <button id="profileSwitch" type="button">Çiftçi Değiştir</button>
       <button id="resetSave" class="danger" type="button">Çiftliği Sıfırla (Yeni Oyun)</button>
     </div>
+    <section class="sb-box" aria-label="Online Liderlik Tablosu (Opsiyonel)">
+      <strong>🌐 Online Liderlik Tablosu (Supabase · Opsiyonel)</strong>
+      <small>Ücretsiz Supabase projen varsa URL ve Anon Key girerek tüm oyuncularla canlı yarışabilirsin.</small>
+      <input id="sbUrl" placeholder="https://xxxx.supabase.co">
+      <input id="sbKey" placeholder="Supabase Anon Public Key">
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><button id="sbSave" type="button" class="primary">Bağlantıyı Kaydet</button><button id="sbClear" type="button">Temizle</button></div>
+    </section>
     <input type="file" id="backupFile" accept=".json,application/json" hidden>
     <section class="confirm-box" id="confirmSave" hidden aria-labelledby="confirmMessage">
       <p id="confirmMessage"></p>
@@ -333,6 +369,14 @@ body.winter{background-color:#e9eddd}
     <div id="sceneDetailBody"></div>
     <div class="detail-actions" id="sceneDetailActions"></div>
     <p class="detail-status-line" id="sceneDetailStatus" role="status"></p>
+  </div>
+</dialog>
+<dialog id="raceDialog" aria-labelledby="raceTitle">
+  <div class="chest-head"><span class="chest-art" aria-hidden="true">🐎</span><h2 id="raceTitle">Bozkır Hipodromu · Canlı Yarış</h2><p id="raceSubtitle">Atlar start kapısında!</p></div>
+  <div class="settings-content">
+    <div id="raceTrack" class="race-track"></div>
+    <p id="raceResultText" style="font-weight:800;min-height:22px"></p>
+    <button class="primary" id="raceClose" type="button" disabled>Hipodromdan Çık</button>
   </div>
 </dialog>
 <dialog id="profileGate" aria-labelledby="profileTitle">
@@ -438,6 +482,63 @@ for(const [id,spec] of entries(industryBuildings)) {
   C.buildings[id]={...spec,level:1,maxLevel:1};
   initial.buildings[id]=0;
 }
+const extraBuildings={
+  stud:{name:"Hara (At Ahırı)",baseCost:650,level:3,maxLevel:1},
+  organicPlant:{name:"Organik Ürün Tesisi",baseCost:2800,level:4,maxLevel:1}
+};
+for(const [id,spec] of entries(extraBuildings)) {
+  C.buildings[id]={...spec};
+  initial.buildings[id]=0;
+}
+const HORSE_BREEDS={
+  rahvan:{name:"Rahvan Tay",icon:"🐴",price:450,speed:30,stamina:36,detail:"Dengeli ve dayanıklı Anadolu rahvan atı."},
+  arap:{name:"Safkan Arap",icon:"🐎",price:1100,speed:48,stamina:52,detail:"Yüksek dayanıklılık ve prestijli soy."},
+  ingiliz:{name:"Safkan İngiliz",icon:"🏇",price:2200,speed:64,stamina:46,detail:"Hipodromların en hızlı sprint safkanı."}
+};
+const HORSE_NAMES=["Rüzgar","Şahbatur","Kırat","Yıldırım","Bozkır Gülü","Alparslan","Doru","Fırtına","Poyraz","Sultani","Efsane","Gölge","Altın Nal","Hızır","Kasırga","Demir"];
+const LOAN_PLANS={
+  small:{name:"Küçük Tarım Kredisi",amount:1000,days:7,baseRate:.12},
+  medium:{name:"Orta Çiftlik Kredisi",amount:5000,days:10,baseRate:.15},
+  large:{name:"Büyük Yatırım Kredisi",amount:20000,days:14,baseRate:.18}
+};
+const LUXURY_ITEMS=[
+  {id:"watch_gold",cat:"Saat",icon:"⌚",name:"Altın Kol Saati",price:3500},
+  {id:"car_classic",cat:"Araba",icon:"🚗",name:"Klasik Koleksiyon Sedan",price:12000},
+  {id:"watch_swiss",cat:"Saat",icon:"🕰️",name:"İsviçre Kronografı",price:18000},
+  {id:"house_stone",cat:"Ev",icon:"🏡",name:"Taş Köy Konağı",price:35000},
+  {id:"car_suv",cat:"Araba",icon:"🚙",name:"Lüks 4×4 Arazi SUV",price:45000},
+  {id:"house_villa",cat:"Ev",icon:"🏘️",name:"Göl Kenarı Villa",price:125000},
+  {id:"car_sport",cat:"Araba",icon:"🏎️",name:"Süper Spor Otomobil",price:160000},
+  {id:"house_yali",cat:"Ev",icon:"🏰",name:"Boğaz Yalısı",price:480000},
+  {id:"yacht",cat:"Prestij",icon:"🛥️",name:"Özel Mega Yat",price:950000},
+  {id:"jet",cat:"Prestij",icon:"🛩️",name:"Özel İş Jeti",price:2500000}
+];
+const EXPORT_COUNTRIES=[
+  {id:"dubai",flag:"🇦🇪",name:"Dubai (BAE)",tolerance:5,organicBonus:8,prefer:["honey","cheese","cake","iceCream","milk"]},
+  {id:"germany",flag:"🇩🇪",name:"Almanya",tolerance:0,organicBonus:16,prefer:["milk","cheese","butter","egg","goatCheese"]},
+  {id:"uk",flag:"🇬🇧",name:"İngiltere",tolerance:2,organicBonus:12,prefer:["milk","butter","honey","cake","egg"]},
+  {id:"usa",flag:"🇺🇸",name:"Amerika (ABD)",tolerance:3,organicBonus:10,prefer:["cheese","milk","egg","iceCream","butter"]},
+  {id:"france",flag:"🇫🇷",name:"Fransa",tolerance:1,organicBonus:14,prefer:["cheese","goatCheese","butter","cake","honey"]},
+  {id:"spain",flag:"🇪🇸",name:"İspanya",tolerance:3,organicBonus:10,prefer:["goatMilk","goatCheese","egg","honey","milk"]}
+];
+const LOCAL_SHOPS=[
+  {id:"bakkal",icon:"🏪",name:"Köy Bakkalı",products:["egg","milk"]},
+  {id:"sarkuteri",icon:"🧀",name:"Mahalle Şarküterisi",products:["cheese","butter","honey"]},
+  {id:"pastane",icon:"🧁",name:"Semt Pastanesi",products:["egg","butter","cake","milk"]}
+];
+const MARKET_CHAINS=[
+  {id:"anadolu",icon:"🏬",name:"Anadolu Süpermarket Zinciri"},
+  {id:"gurme",icon:"🛍️",name:"Gurme Şehir Marketleri"},
+  {id:"mega",icon:"🏢",name:"Mega Hipermarket A.Ş."}
+];
+const RIVAL_BARONS=[
+  {name:"Trakya Baronu",farm:"Kırklareli Çiftliği",luxury:18500},
+  {name:"Ege Ağası",farm:"Menderes Mandıra",luxury:64000},
+  {name:"Konya Holding",farm:"Ova Agro A.Ş.",luxury:215000},
+  {name:"Anadolu Kralı",farm:"Bozkır İmparatorluğu",luxury:680000},
+  {name:"Bozkır Efsanesi",farm:"Altın Vadi Holding",luxury:1850000}
+];
+const ORGANIC_LICENSE_COST=1500;
 const goldBreed={name:"Altın Irk İneği",feed:"silage",product:"milk",yieldUnits:250,feedUnits:42,base:12000,level:1};
 C.animals.goldBreed=goldBreed;initial.animals.goldBreed=0;
 C.products.iceCream={name:"Bozkır Dondurması",price:315};initial.stock.iceCream=0;
@@ -454,7 +555,7 @@ function capacity(s,id) {
   return Math.floor(b.baseCapacity * b.capacityGrowth ** (s.buildings[id]-1))*(id==="silo"&&s.buildings.megaSilo?8:1);
 }
 function reserved(s) {
-  return Object.values(s.jobs).reduce((n,j) => n + (j.yield ?? C.recipes[j.recipe].units),s.auction?.sale?.quantity||0);
+  return Object.values(s.jobs).reduce((n,j) => n + (j.yield ?? C.recipes[j.recipe].units),(s.auction?.sale?.quantity||0)+(s.miniAuction?.sale?.quantity||0));
 }
 function room(s) { return capacity(s,"barn") - sum(s.stock) - reserved(s); }
 function batch(s,a) {
@@ -557,7 +658,135 @@ function serviceDebt(s) {
   if(!loan)return;
   const payment=Math.min(s.coins,loan.due);
   s.coins-=payment;loan.due-=payment;
+  if(payment>0&&loan.due===0)s.creditScore=Math.min(900,(s.creditScore||600)+8);
   if(loan.left===0&&loan.due===0)s.loan=null;
+}
+function loanRate(s,plan) {
+  const score=s.creditScore||600;
+  const adj=Math.max(-.05,Math.min(.06,(600-score)/5000));
+  return Math.max(.05,Math.round((plan.baseRate+adj)*100)/100);
+}
+function organicMult(s) {
+  return s.buildings?.organicPlant?1.4:1;
+}
+const miniDay=s=>[0,2].includes(Math.floor((s.farmTime||0)%WEEK/DAY));
+const dayOf=t=>Math.floor((t||0)/DAY);
+function establishMiniAuction(s) {
+  const day=dayOf(s.farmTime);
+  const pool=ids.filter(id=>id!=="goldBreed"&&animalUnlocked(s,id)&&s.animals[id]+pendingAnimals(s,id)<190);
+  const id=(pool.length?pool:["manisa"])[Math.floor(datedRandom(s.worldSeed,day,3119)*(pool.length||1))];
+  const quantity=1+Math.floor(datedRandom(s.worldSeed,day,3217)*2);
+  const basis=Array.from({length:quantity},(_,i)=>unitCost(id,s.animals[id]+pendingAnimals(s,id)+i)).reduce((a,b)=>a+b,0);
+  const limit=Math.max(1,Math.floor(basis*94/100)), start=Math.min(limit,Math.ceil(basis*78/100));
+  const firstBid=start+Math.max(1,Math.floor(basis*.02));
+  const botLimit=Math.min(limit,firstBid+Math.floor(Math.max(0,limit-firstBid)*datedRandom(s.worldSeed,day,3313)));
+  s.miniAuction={day,buy:{id,quantity,basis,limit,start,botLimit,bid:start,owner:BOTS[day%BOTS.length],held:0,next:0,turn:0},sale:null};
+}
+function finishMiniAuction(s) {
+  const m=s.miniAuction;
+  if(!m)return;
+  const buy=m.buy;
+  if(buy.held>0){
+    queuePackage(s,buy.id,buy.quantity,buy.held);
+    s.lastAuction="Mini ihale kazanıldı · "+buy.quantity+" "+C.animals[buy.id].name+" nakliyeye verildi.";
+  } else if(buy.turn)s.lastAuction="Mini alım ihalesini "+buy.owner+" kazandı.";
+  if(m.sale){
+    const {id,quantity,offer}=m.sale;
+    credit(s,offer);earnXp(s,quantity*C.products[id].price);s.firstSale=true;
+    s.lastAuction=(buy.turn?s.lastAuction+" ":"")+"Mini satış ihalesi tamamlandı · "+fmt(offer)+" akçe.";
+  }
+  s.miniAuction=null;
+}
+function miniSaleLot(s,id) {
+  const quantity=Math.min(s.stock[id],12);
+  const {eventValue}=saleTerms(s,id,quantity);
+  const basis=boostedRevenue(s,eventValue), min=Math.ceil(basis*106/100), limit=Math.floor(basis*122/100);
+  return {id,quantity,basis,offer:min,limit,owner:BOTS[1],turn:0,next:s.farmTime+2};
+}
+function refreshHorseAuction(s) {
+  const slot=Math.floor(dayOf(s.farmTime)/2);
+  if(s.horseAuction?.slot===slot)return;
+  if(s.horseAuction?.held>0){
+    const ha=s.horseAuction;
+    if((s.horses||[]).length<8){
+      s.horses.push({uid:"h"+s.farmTime+"_"+slot,breed:ha.breed,name:ha.name,speed:ha.speed,stamina:ha.stamina,wins:0,value:ha.held,trainCount:0,lastRaceDay:-1});
+      s.lastRace="🏆 Müzayededen "+ha.name+" ("+HORSE_BREEDS[ha.breed].name+") kazanıldı!";
+    } else { s.coins+=ha.held; }
+  }
+  const breeds=Object.keys(HORSE_BREEDS);
+  const breed=breeds[Math.floor(datedRandom(s.worldSeed,slot,5501)*breeds.length)];
+  const spec=HORSE_BREEDS[breed];
+  const name=HORSE_NAMES[Math.floor(datedRandom(s.worldSeed,slot,5503)*HORSE_NAMES.length)]+" #"+(slot%99+1);
+  const bonusSpd=6+Math.floor(datedRandom(s.worldSeed,slot,5507)*14);
+  const bonusSta=6+Math.floor(datedRandom(s.worldSeed,slot,5519)*14);
+  const start=Math.round(spec.price*1.1);
+  const botLimit=Math.round(spec.price*(1.35+datedRandom(s.worldSeed,slot,5521)*.45));
+  s.horseAuction={slot,breed,name,speed:spec.speed+bonusSpd,stamina:spec.stamina+bonusSta,bid:start,botLimit,owner:BOTS[slot%BOTS.length],held:0,turn:0};
+}
+function refreshContracts(s) {
+  const day=dayOf(s.farmTime);
+  if(s.contracts?.chain?.accepted && day>s.contracts.chain.deadlineDay) {
+    const fine=Math.min(s.coins,Math.round(s.contracts.chain.reward*.15));
+    s.coins-=fine;
+    s.reputation=Math.max(0,(s.reputation||0)-15);
+    s.contracts.chain=null;
+    s.lastContractMsg="⚠️ Market zinciri sözleşmesi zamanında teslim edilemedi! -15 İtibar"+(fine?" ve "+fmt(fine)+" akçe ceza.":"");
+  }
+  if(s.contractDay===day && s.contracts?.local?.length)return;
+  s.contractDay=day;
+  const local=LOCAL_SHOPS.slice(0,2+day%2).map((shop,idx)=>{
+    const prod=shop.products[Math.floor(datedRandom(s.worldSeed,day*10+idx,6101)*shop.products.length)];
+    const qty=Math.max(5,Math.min(30,5+level(s)*3+Math.floor(datedRandom(s.worldSeed,day*10+idx,6107)*10)));
+    const {eventValue}=saleTerms(s,prod,qty);
+    const reward=Math.ceil(boostedRevenue(s,eventValue)*(1.14+datedRandom(s.worldSeed,day*10+idx,6113)*.08));
+    return {id:"loc_"+day+"_"+idx,shop:shop.name,icon:shop.icon,product:prod,quantity:qty,reward,done:false};
+  });
+  let chain=s.contracts?.chain||null;
+  if(!chain || (!chain.accepted && day%3===0)) {
+    const ch=MARKET_CHAINS[Math.floor(datedRandom(s.worldSeed,day,6203)*MARKET_CHAINS.length)];
+    const p1=s.buildings.dairy?"cheese":"milk", p2=s.buildings.oven?"cake":"egg";
+    const q1=Math.max(10,Math.min(80,10+level(s)*5)), q2=Math.max(15,Math.min(120,15+level(s)*7));
+    const v1=saleTerms(s,p1,q1).eventValue, v2=saleTerms(s,p2,q2).eventValue;
+    const reward=Math.ceil(boostedRevenue(s,v1+v2)*(s.buildings.organicPlant?1.35:1.26));
+    chain={id:"ch_"+day,name:ch.name,icon:ch.icon,items:{[p1]:q1,[p2]:q2},reward,accepted:false,deadlineDay:day+3,organic:!!s.buildings.organicPlant};
+  }
+  s.contracts={local,chain};
+}
+function exportChance(s,order,margin) {
+  if(margin<=order.initMargin)return 100;
+  const country=EXPORT_COUNTRIES.find(c=>c.id===order.country)||EXPORT_COUNTRIES[0];
+  const over=margin-order.initMargin;
+  const repBonus=Math.min(8,Math.floor((s.reputation||0)/15));
+  const orgBonus=s.organicLicense?(s.buildings.organicPlant?country.organicBonus:Math.floor(country.organicBonus/2)):0;
+  const raw=94 - over*6.8 + country.tolerance + repBonus + orgBonus;
+  return Math.max(8,Math.min(97,Math.round(raw)));
+}
+function refreshExportOrders(s,force=false) {
+  const slot=Math.floor(dayOf(s.farmTime)/2);
+  if(!force && s.exportSlot===slot && s.exportOrders?.length)return;
+  s.exportSlot=slot;
+  const picked=[];
+  const pool=[...EXPORT_COUNTRIES];
+  for(let i=0;i<3;i++) {
+    const idx=Math.floor(datedRandom(s.worldSeed,slot*31+i+(force?s.farmTime:0),7103)*pool.length);
+    const c=pool.splice(idx,1)[0];
+    const avail=c.prefer.filter(p=>p!=="iceCream"||s.buildings.iceFactory);
+    const prod=avail[Math.floor(datedRandom(s.worldSeed,slot*17+i+(force?s.farmTime:0),7109)*avail.length)]||"milk";
+    const cap=capacity(s,"barn");
+    const qty=Math.max(30,Math.min(Math.max(50,Math.floor(cap*.75)),30+level(s)*18+Math.floor(datedRandom(s.worldSeed,slot*19+i,7121)*40)));
+    const initMargin=6+Math.floor(datedRandom(s.worldSeed,slot*23+i+(force?s.farmTime:0),7127)*6); // 6..11%
+    picked.push({uid:"exp_"+slot+"_"+i+"_"+(force?s.farmTime:0),country:c.id,product:prod,quantity:qty,initMargin,counterMargin:Math.min(20,initMargin+4),status:"open",note:""});
+  }
+  s.exportOrders=picked;
+}
+function luxuryPrice(s,item) {
+  const w=weekOf(s.farmTime||0);
+  const swing=Math.round((datedRandom(s.worldSeed||1,w,8101+item.id.length*37)*0.20-0.08)*100)/100; // -8% to +12%
+  return Math.max(100,Math.round(item.price*(1+swing)));
+}
+function luxuryTotal(state) {
+  if(!state?.luxury)return 0;
+  return LUXURY_ITEMS.reduce((acc,it)=>acc+(state.luxury[it.id]||0)*it.price,0);
 }
 function runSupplier(s) {
   if(s.supplier&&sum(s.feed)*10<capacity(s,"silo")&&s.coins>=C.feeds.grain.price)fillSilo(s);
@@ -597,10 +826,42 @@ function finishAuction(s) {
 }
 function processEconomy(s) {
   manageIndustry(s);
-  if(s.loan?.left>0&&s.farmTime>=s.loan.next) {
-    s.loan.left--;s.loan.due+=160;s.loan.next+=DAY;
-    serviceDebt(s);
+  const curDay=dayOf(s.farmTime);
+  if(s.depositDay===undefined)s.depositDay=curDay;
+  if(curDay>s.depositDay) {
+    const daysPassed=curDay-s.depositDay;
+    s.depositDay=curDay;
+    if((s.deposit||0)>0) {
+      const interest=Math.min(50000,Math.floor(s.deposit*0.03*daysPassed));
+      if(interest>0)s.deposit=Math.min(Number.MAX_SAFE_INTEGER,s.deposit+interest);
+    }
   }
+  if(s.loan?.left>0&&s.farmTime>=s.loan.next) {
+    const inst=s.loan.installment||160;
+    s.loan.left--;s.loan.due+=inst;s.loan.next+=DAY;
+    serviceDebt(s);
+    if(s.loan&&s.loan.due>0)s.creditScore=Math.max(300,(s.creditScore||600)-15);
+  }
+  if(s.miniAuction&&s.farmTime>=(s.miniAuction.day+1)*DAY)finishMiniAuction(s);
+  if(miniDay(s)&&!s.miniAuction)establishMiniAuction(s);
+  if(s.miniAuction) {
+    const mb=s.miniAuction.buy;
+    if(mb.next&&s.farmTime>=mb.next){
+      mb.next=0;
+      const counter=mb.bid+Math.max(1,Math.floor(mb.basis*.02));
+      if(counter<=mb.botLimit){releaseBid(s,mb);mb.bid=counter;mb.owner=BOTS[mb.turn%BOTS.length];}
+    }
+    const ms=s.miniAuction.sale;
+    if(ms?.next&&s.farmTime>=ms.next){
+      ms.turn++;
+      const raise=Math.max(1,Math.ceil(ms.basis*(.02+datedRandom(s.worldSeed,s.miniAuction.day*17+ms.turn,709)*.04)));
+      ms.offer=Math.min(ms.limit,ms.offer+raise);ms.owner=BOTS[ms.turn%BOTS.length];
+      ms.next=ms.offer<ms.limit?s.farmTime+3:0;
+    }
+  }
+  refreshHorseAuction(s);
+  refreshContracts(s);
+  refreshExportOrders(s);
   if(s.auction&&s.farmTime>=auctionEnd(s.auction.week))finishAuction(s);
   if(friday(s)&&!s.auction)establishAuction(s);
   const a=s.auction;
@@ -628,14 +889,17 @@ function nextEconomy(s) {
   if(s.loan?.left>0)times.push(s.loan.next-s.farmTime);
   if(s.auction?.buy.next)times.push(s.auction.buy.next-s.farmTime);
   if(s.auction?.sale?.next)times.push(s.auction.sale.next-s.farmTime);
-  return Math.min(...times);
+  if(s.miniAuction?.buy.next)times.push(s.miniAuction.buy.next-s.farmTime);
+  if(s.miniAuction?.sale?.next)times.push(s.miniAuction.sale.next-s.farmTime);
+  return Math.max(1,Math.min(...times));
 }
 function seasonPrice(s,id,round) {
-  const base=marketPrice(s,id,round);
-  return winter(s)?Math.round(base*125)/100:base;
+  const base=marketPrice(s,id,round)*organicMult(s);
+  return winter(s)?Math.round(base*125)/100:Math.round(base*100)/100;
 }
 function winterRevenue(s,amount) {
-  return winter(s)?Math.round(amount*125/100):amount;
+  const org=Math.round(amount*organicMult(s));
+  return winter(s)?Math.round(org*125/100):org;
 }
 function nextBid(b){
   return b.turn===0?b.start:b.bid+Math.max(1,Math.floor(b.basis*.015));
@@ -784,6 +1048,7 @@ function newValley(s) {
   next.valleys=(s.valleys||0)+1;
   next.legacySeconds=(s.legacySeconds||0)+s.farmTime;
   next.paceStage=s.paceStage;next.paceSince=s.paceSince;next.lifetimeWealth=s.lifetimeWealth;next.lifetimeXp=s.lifetimeXp;
+  next.luxury={...(s.luxury||{})};next.creditScore=s.creditScore||600;next.reputation=s.reputation||0;
   next.lastMs=Date.now();
   return next;
 }
@@ -871,11 +1136,11 @@ function settle(s,now,report) {
 const LEGACY_KEY="bozkir-ciftligi-v1", SOUND_KEY=LEGACY_KEY+"-sound", $=id=>document.getElementById(id);
 let KEY=LEGACY_KEY;
 const fmt=n=>n.toLocaleString("tr-TR");
-const tabs={"Sürü":"🐔","Yemlik":"🌾","Pazar":"💰","Yapılar":"🏗️","Atölye":"🧀","Islah":"🧬","Çalışanlar":"👩‍🌾","Hayvanlarım":"🐮","İhaleler":"⚖️","Çağlar":"🏭"};
+const tabs={"Sürü":"🐔","Yemlik":"🌾","Pazar":"💰","Yapılar":"🏗️","Atölye":"🧀","Islah":"🧬","Çalışanlar":"👩‍🌾","Hayvanlarım":"🐮","İhaleler":"⚖️","Hara":"🐎","Anlaşmalar":"🤝","Banka":"🏦","İhracat":"🌍","Lüks":"💎","Çağlar":"🏭"};
 const amounts=[1,5,10,Infinity], choice={"Sürü":1,"Yemlik":1};
 const productIcon={egg:"🥚",milk:"🥛",goatMilk:"🥛",honey:"🍯",cheese:"🧀",butter:"🧈",cake:"🍰",goatCheese:"🧀",goldenEgg:"🥚",jerseyCream:"🥛",iceCream:"🍨"};
 const feedIcon={grain:"🌾",silage:"🌿",syrup:"🍯"};
-const buildingIcon={silo:"🌾",barn:"📦",dairy:"🥛",oven:"🔥",lab:"🧬"};
+const buildingIcon={silo:"🌾",barn:"📦",dairy:"🥛",oven:"🔥",lab:"🧬",stud:"🐎",organicPlant:"🌿"};
 const animalIcon=a=>a.feed==="grain"?"🐔":a.feed==="syrup"?"🐝":a.product==="goatMilk"?"🐐":"🐄";
 const chickens=s=>ids.reduce((n,id)=>n+(C.animals[id].feed==="grain"?s.animals[id]:0),0);
 const quests={
@@ -895,7 +1160,7 @@ function valid(v) {
   return v && v.version===C.version && [v.coins,v.xp,v.lastMs,v.phase,v.turn].every(nat) &&
     validExtensions(v) && v.phase<C.cycleSeconds && v.turn<ids.length && counts(v.feed,C.feeds) &&
     validStock(v.stock) && counts(v.animals,C.animals,{goldBreed:0}) && v.animals.manisa>=1 &&
-    counts(v.buildings,C.buildings,industryBuildings) && v.buildings.silo>=1 && v.buildings.barn>=1 &&
+    counts(v.buildings,C.buildings,{...industryBuildings,...extraBuildings}) && v.buildings.silo>=1 && v.buildings.barn>=1 &&
     entries(v.buildings).every(([k,n])=>n<=C.buildings[k].maxLevel) &&
     Array.isArray(v.research) && new Set(v.research).size===v.research.length &&
     v.research.every(k=>Object.hasOwn(C.research,k)) && v.jobs && typeof v.jobs==="object" && !Array.isArray(v.jobs) &&
@@ -923,6 +1188,7 @@ function questState(v) {
   v.tractorUntil??=0;v.cargoReady??=120;v.cargoCount??=0;
   v.offlineChest??=null;
   for(const id of Object.keys(industryBuildings))v.buildings[id]??=0;
+  for(const id of Object.keys(extraBuildings))v.buildings[id]??=0;
   v.stock.iceCream??=0;v.animals.goldBreed??=0;
   if(!v.calendarAligned||!v.breedPhase)v.breedPhase=Object.fromEntries(ids.map(id=>[id,v.farmTime%durations[id]]));
   v.calendarAligned=true;v.deliveries??=[];v.lastDelivery??="";
@@ -931,6 +1197,13 @@ function questState(v) {
   v.industryDay??=Math.floor(v.farmTime/DAY);v.nextExport??=0;
   v.purchaseCosts??={};v.supplier??=false;v.loan??=null;
   v.auction??=null;v.lastAuction??="";
+  v.miniAuction??=null;
+  v.horses??=[];v.horseAuction??=null;v.lastRace??="";
+  v.organicLicense??=false;
+  v.contracts??={local:[],chain:null};v.contractDay??=-1;v.reputation??=0;v.lastContractMsg??="";
+  v.creditScore??=600;v.deposit??=0;v.depositDay??=dayOf(v.farmTime);
+  v.luxury??={};
+  v.exportOrders??=[];v.exportSlot??=-1;v.lastExportMsg??="";
   return v;
 }
 function validExtensions(v) {
@@ -954,7 +1227,8 @@ function validExtensions(v) {
       sale.quantity>=5&&sale.quantity<=24&&sale.offer>=Math.ceil(sale.basis*106/100)&&
       sale.offer<=sale.limit&&sale.limit===Math.floor(sale.basis*131/100)&&bot(sale.owner));
   };
-  const validLoan=l=>l===null||Boolean(l&&[l.left,l.due,l.next].every(nat)&&l.left<=7&&l.due<=1120&&
+  const validLoan=l=>l===null||Boolean(l&&[l.left,l.due,l.next].every(nat)&&l.left<=20&&l.due<=200000&&
+    (!Object.hasOwn(l,"installment")||nat(l.installment))&&
     (l.left===0||l.next>(v.farmTime||0))&&(l.left>0||l.due>0));
   const oldDurations={manisa:15,mersin:16,zibrit:16,denizli:18,endulus:19,habes:20,saanen:35,
     anadolu:45,simental:50,angus:55,jersey:55,holstein:60,kafkas:80,carniola:80};
@@ -1157,11 +1431,238 @@ function quote(s,action,id) {
   if(action==="build") {
     const b=C.buildings[id], n=s.buildings[id];
     if(n>=b.maxLevel) return {why:"Tamamlandı",label:"Tamamlandı"};
+    if(id==="organicPlant"&&!s.organicLicense)return {why:"Önce Organik Üretim Lisansı al",label:"🔒 Lisans Gerekli"};
     if(b.minDay&&eraDay(s)<b.minDay)return {why:"İlerleme koşulu",label:"🔒 Gün "+fmt(b.minDay)};
     if(!b.minDay&&["dairy","oven"].includes(id)&&eraDay(s)<14)return {why:"Mandıra & Tesis çağı gerekli",label:"🔒 Gün 14"};
     if(level(s)<b.level) return {why:"Çiftlik seviyesi "+b.level+" gerekir",label:"🔒 Sv. "+b.level};
     const price=cost(b.baseCost,b.costGrowth||1,Math.max(0,n-1));
     return buy(price,(n?"Genişlet":"Kur")+" · "+fmt(price),()=>{s.buildings[id]++;});
+  }
+  if(action==="buyOrganicLicense") {
+    if(s.organicLicense)return {why:"Lisans alındı",label:"✓ Lisanslı"};
+    if(level(s)<4)return {why:"Çiftlik seviyesi 4 gerekir",label:"🔒 Sv. 4"};
+    return buy(ORGANIC_LICENSE_COST,"Lisans Al · "+fmt(ORGANIC_LICENSE_COST)+" 💰",()=>{
+      s.organicLicense=true;
+      return "🌿 Resmi Organik Üretim Lisansı alındı! Artık Organik Ürün Tesisi kurabilirsin.";
+    });
+  }
+  if(action==="miniBuyBid") {
+    const b=s.miniAuction?.buy;
+    if(!miniDay(s)||!b)return {why:"Mini ihale Pazartesi ve Çarşamba açık"};
+    if(b.held>0)return {why:"Teklifin önde",label:"Teklifin önde"};
+    const amount=nextBid(b);
+    const label="Teklif Ver · "+fmt(amount)+" 💰";
+    if(amount>b.limit||s.coins<amount)return {why:amount>b.limit?"Tavan fiyata ulaşıldı":"Akçe yetersiz",label};
+    return buy(amount,label,()=>{
+      b.bid=amount;b.held=amount;b.owner="Sen";b.turn++;
+      b.next=s.farmTime+2;
+      return "Mini ihalede teklifin önde · "+fmt(amount)+" akçe ayrıldı.";
+    });
+  }
+  if(action==="miniSellBid") {
+    if(!miniDay(s)||!s.miniAuction)return {why:"Mini ihale Pazartesi ve Çarşamba açık"};
+    if(s.miniAuction.sale)return {why:"Bekleyen mini satış paketin var"};
+    if(s.stock[id]<3)return {why:"En az 3 ürün gerekli"};
+    return {run:()=>{
+      const lot=miniSaleLot(s,id);
+      s.stock[id]-=lot.quantity;s.miniAuction.sale=lot;
+      return fmt(lot.quantity)+" "+C.products[id].name+" mini satış ihalesine ayrıldı.";
+    }};
+  }
+  if(action==="loanPlan") {
+    const plan=LOAN_PLANS[id];
+    if(!plan)return {why:"Geçersiz paket"};
+    if(s.loan)return {why:"Önce açık krediyi kapat"};
+    const rate=loanRate(s,plan), totalPay=Math.ceil(plan.amount*(1+rate)), inst=Math.ceil(totalPay/plan.days);
+    return {label:"Çek · "+fmt(plan.amount)+" 💰",run:()=>{
+      s.coins+=plan.amount;
+      s.loan={left:plan.days,due:0,next:s.farmTime+DAY,installment:inst,plan:id};
+      return plan.name+" çekildi · "+plan.days+" gün × "+fmt(inst)+" akçe.";
+    }};
+  }
+  if(action==="repayLoan") {
+    if(!s.loan)return {why:"Açık kredi yok"};
+    const rem=s.loan.left*(s.loan.installment||160)+s.loan.due;
+    if(s.coins<rem)return {why:"Yeterli akçe yok ("+fmt(rem)+")"};
+    return {label:"Tamamını Kapat · "+fmt(rem)+" 💰",run:()=>{
+      s.coins-=rem;s.loan=null;s.creditScore=Math.min(900,(s.creditScore||600)+25);
+      return "Kredi erken kapatıldı! Kredi notun +25 yükseldi.";
+    }};
+  }
+  if(action==="depositAdd") {
+    const amt=id==="all"?s.coins:Math.min(s.coins,Number(id));
+    if(amt<=0)return {why:"Kasada yeterli akçe yok"};
+    return {label:"Yatır · "+fmt(amt)+" 💰",run:()=>{
+      s.coins-=amt;s.deposit=(s.deposit||0)+amt;
+      return fmt(amt)+" akçe vadeli mevduata yatırıldı (Günlük %3 faiz).";
+    }};
+  }
+  if(action==="depositWithdraw") {
+    const amt=id==="all"?(s.deposit||0):Math.min(s.deposit||0,Number(id));
+    if(amt<=0)return {why:"Mevduatta bakiye yok"};
+    return {label:"Çek · "+fmt(amt)+" 💰",run:()=>{
+      s.deposit-=amt;s.coins+=amt;
+      return fmt(amt)+" akçe mevduattan kasana aktarıldı.";
+    }};
+  }
+  if(action==="buyHorse") {
+    const spec=HORSE_BREEDS[id];
+    if(!s.buildings.stud)return {why:"Önce Hara (At Ahırı) kur",label:"🔒 Hara Gerekli"};
+    if((s.horses||[]).length>=8)return {why:"Hara dolu (En fazla 8 at)",label:"Hara Dolu"};
+    return buy(spec.price,"Al · "+fmt(spec.price)+" 💰",()=>{
+      const nm=HORSE_NAMES[Math.floor(Math.random()*HORSE_NAMES.length)]+" "+(s.horses.length+1);
+      s.horses.push({uid:"h"+Date.now()+"_"+Math.floor(Math.random()*999),breed:id,name:nm,
+        speed:spec.speed+Math.floor(Math.random()*6),stamina:spec.stamina+Math.floor(Math.random()*6),
+        wins:0,value:spec.price,trainCount:0,lastRaceDay:-1});
+      return "🐎 "+nm+" ("+spec.name+") harana katıldı!";
+    });
+  }
+  if(action==="trainHorse") {
+    const h=(s.horses||[]).find(x=>x.uid===id);
+    if(!h)return {why:"At bulunamadı"};
+    if(h.trainCount>=12)return {why:"Maksimum antrenman",label:"Zirvede"};
+    const price=120+h.trainCount*95;
+    return buy(price,"Antrenman · "+fmt(price)+" 💰",()=>{
+      h.trainCount++;h.speed+=4+Math.floor(Math.random()*4);h.stamina+=3+Math.floor(Math.random()*4);
+      h.value+=Math.round(price*1.15);
+      return "🐎 "+h.name+" güçlendi! Hız: "+h.speed+" · Dayanıklılık: "+h.stamina;
+    });
+  }
+  if(action==="raceHorse") {
+    const h=(s.horses||[]).find(x=>x.uid===id);
+    if(!h)return {why:"At bulunamadı"};
+    if(h.lastRaceDay===dayOf(s.farmTime))return {why:"Bugün yarıştı, yarın tekrar koşabilir",label:"Dinleniyor"};
+    return buy(150,"Yarışa Sok · 150 💰",()=>{
+      h.lastRaceDay=dayOf(s.farmTime);
+      setTimeout(()=>startLiveRace(h),40);
+      return "🏁 "+h.name+" Bozkır Hipodromu'nda start alıyor!";
+    });
+  }
+  if(action==="horseBid") {
+    const ha=s.horseAuction;
+    if(!s.buildings.stud)return {why:"Önce Hara kur",label:"🔒 Hara Gerekli"};
+    if(!ha)return {why:"Aktif müzayede yok"};
+    if((s.horses||[]).length>=8&&!ha.held)return {why:"Hara dolu (8/8)"};
+    if(ha.held>0)return {why:"Teklifin önde",label:"Teklifin Önde"};
+    const next=ha.turn===0?ha.bid:ha.bid+Math.max(50,Math.floor(ha.bid*.08));
+    return buy(next,"Teklif Ver · "+fmt(next)+" 💰",()=>{
+      ha.bid=next;ha.held=next;ha.owner="Sen";ha.turn++;
+      const botCounter=next+Math.max(50,Math.floor(next*.08));
+      if(botCounter<=ha.botLimit){
+        s.coins+=ha.held;ha.held=0;ha.bid=botCounter;ha.owner=BOTS[ha.turn%BOTS.length];
+        return ha.owner+" teklifi "+fmt(botCounter)+" akçeye çıkardı! Akçen iade edildi.";
+      }
+      return "🏆 "+ha.name+" için teklifin önde ("+fmt(next)+" akçe)! Yeni dönemde harana gelecek.";
+    });
+  }
+  if(action==="sellHorseAuction") {
+    const idx=(s.horses||[]).findIndex(x=>x.uid===id);
+    if(idx<0)return {why:"At bulunamadı"};
+    const h=s.horses[idx];
+    const mult=0.95+(h.wins*0.12)+datedRandom(s.worldSeed,dayOf(s.farmTime)+idx,5903)*0.30;
+    const price=Math.round(h.value*mult);
+    return {label:"Müzayedede Sat · "+fmt(price)+" 💰",run:()=>{
+      s.horses.splice(idx,1);credit(s,price);earnXp(s,Math.round(price/5));
+      return "🔨 "+h.name+" müzayedede "+fmt(price)+" akçeye satıldı!";
+    }};
+  }
+  if(action==="deliverLocal") {
+    const c=(s.contracts?.local||[]).find(x=>x.id===id);
+    if(!c||c.done)return {why:"Tamamlandı",label:"✓ Teslim Edildi"};
+    if((s.stock[c.product]||0)<c.quantity)return {why:"Yetersiz stok ("+(s.stock[c.product]||0)+"/"+c.quantity+")"};
+    return {label:"Teslim Et · "+fmt(c.reward)+" 💰",run:()=>{
+      s.stock[c.product]-=c.quantity;c.done=true;
+      credit(s,c.reward);earnXp(s,c.quantity*C.products[c.product].price);
+      s.reputation=(s.reputation||0)+5;s.firstSale=true;
+      return "🤝 "+c.shop+" teslimatı tamamlandı! +"+fmt(c.reward)+" akçe · +5 İtibar.";
+    }};
+  }
+  if(action==="acceptChain") {
+    const ch=s.contracts?.chain;
+    if(!ch)return {why:"Aktif zincir teklifi yok"};
+    if(ch.accepted)return {why:"Sözleşme zaten aktif"};
+    return {label:"Sözleşmeyi İmzala (3 Gün)",run:()=>{
+      ch.accepted=true;ch.deadlineDay=dayOf(s.farmTime)+3;
+      return "🏬 "+ch.name+" ile sözleşme imzalandı! 3 oyun günü içinde teslim et.";
+    }};
+  }
+  if(action==="deliverChain") {
+    const ch=s.contracts?.chain;
+    if(!ch||!ch.accepted)return {why:"Önce sözleşmeyi imzala"};
+    if(entries(ch.items).some(([k,n])=>(s.stock[k]||0)<n))return {why:"Ambarda istenen ürünler eksik"};
+    return {label:"Toptan Teslim Et · "+fmt(ch.reward)+" 💰",run:()=>{
+      let xp=0;
+      for(const [k,n] of entries(ch.items)){s.stock[k]-=n;xp+=n*C.products[k].price;}
+      credit(s,ch.reward);earnXp(s,xp);s.reputation=(s.reputation||0)+25;s.firstSale=true;
+      s.lastContractMsg="🏆 "+ch.name+" sözleşmesi başarıyla teslim edildi! +"+fmt(ch.reward)+" akçe · +25 İtibar.";
+      s.contracts.chain=null;
+      return s.lastContractMsg;
+    }};
+  }
+  if(action==="buyLuxury") {
+    const item=LUXURY_ITEMS.find(x=>x.id===id);
+    if(!item)return {why:"Eşya bulunamadı"};
+    const price=luxuryPrice(s,item);
+    return buy(price,"Satın Al · "+fmt(price)+" 💰",()=>{
+      s.luxury[id]=(s.luxury[id]||0)+1;
+      syncLeaderboardOnline();
+      return "💎 "+item.name+" koleksiyonuna eklendi! Lüks servetin yükseldi.";
+    });
+  }
+  if(action==="sellLuxury") {
+    const item=LUXURY_ITEMS.find(x=>x.id===id);
+    if(!item||!(s.luxury?.[id]>0))return {why:"Bu eşyadan elinde yok"};
+    const price=Math.round(luxuryPrice(s,item)*0.90);
+    return {label:"Sat · "+fmt(price)+" 💰",run:()=>{
+      s.luxury[id]--;s.coins+=price;
+      syncLeaderboardOnline();
+      return "💎 "+item.name+" "+fmt(price)+" akçeye satıldı.";
+    }};
+  }
+  if(action==="exportAccept") {
+    const o=(s.exportOrders||[]).find(x=>x.uid===id);
+    if(!o||o.status!=="open")return {why:"Sipariş kapalı"};
+    if((s.stock[o.product]||0)<o.quantity)return {why:"Ambarda "+o.quantity+" "+C.products[o.product].name+" gerekli"};
+    const {eventValue}=saleTerms(s,o.product,o.quantity);
+    const total=Math.ceil(boostedRevenue(s,eventValue)*(1+o.initMargin/100));
+    return {label:"Kabul Et (+"+o.initMargin+"%) · "+fmt(total)+" 💰",run:()=>{
+      s.stock[o.product]-=o.quantity;o.status="accepted";
+      credit(s,total);earnXp(s,o.quantity*C.products[o.product].price);
+      s.reputation=(s.reputation||0)+10;s.firstSale=true;
+      const c=EXPORT_COUNTRIES.find(x=>x.id===o.country);
+      o.note="✓ "+c.name+" siparişi +"+o.initMargin+"% kârla teslim edildi ("+fmt(total)+" akçe).";
+      return "✈️ "+o.note;
+    }};
+  }
+  if(action==="exportCounter") {
+    const o=(s.exportOrders||[]).find(x=>x.uid===id);
+    if(!o||o.status!=="open")return {why:"Sipariş kapalı"};
+    if((s.stock[o.product]||0)<o.quantity)return {why:"Ambarda "+o.quantity+" "+C.products[o.product].name+" gerekli"};
+    const margin=Math.max(6,Math.min(20,o.counterMargin||o.initMargin));
+    const chance=exportChance(s,o,margin);
+    const {eventValue}=saleTerms(s,o.product,o.quantity);
+    const total=Math.ceil(boostedRevenue(s,eventValue)*(1+margin/100));
+    return {label:"Karşı Teklif (+"+margin+"% · %"+chance+")",run:()=>{
+      const c=EXPORT_COUNTRIES.find(x=>x.id===o.country);
+      const roll=Math.random()*100;
+      if(roll<chance){
+        s.stock[o.product]-=o.quantity;o.status="accepted";
+        credit(s,total);earnXp(s,o.quantity*C.products[o.product].price);
+        s.reputation=(s.reputation||0)+15;s.firstSale=true;
+        o.note="🎉 "+c.name+" +%"+margin+" karşı teklifini KABUL ETTİ! +"+fmt(total)+" akçe!";
+        return o.note;
+      } else {
+        o.status="rejected";
+        o.note="❌ "+c.name+" +%"+margin+" karşı teklifini reddetti ve masadan kalktı.";
+        return o.note;
+      }
+    }};
+  }
+  if(action==="refreshExports") {
+    return {label:"Yeni Ülke Siparişleri Getir",run:()=>{
+      refreshExportOrders(s,true);
+      return "🌍 Yeni yurt dışı ihracat teklifleri geldi!";
+    }};
   }
   if(action==="craft") {
     const r=C.recipes[id], job=s.jobs[r.building];
@@ -1314,6 +1815,11 @@ function cards() {
   if(screen==="Çağlar")return industryCards();
   if(screen==="Hayvanlarım")return portfolioCards();
   if(screen==="İhaleler")return auctionCards();
+  if(screen==="Hara")return haraCards();
+  if(screen==="Anlaşmalar")return contractCards();
+  if(screen==="Banka")return bankCards();
+  if(screen==="İhracat")return exportCards();
+  if(screen==="Lüks")return luxuryCards();
   if(screen==="Sürü") return entries(C.animals).filter(([,a])=>matchesHerd(a,herdFilter)).map(([id,a])=>{
     const b=batch(s,a);
     const needsSpace=b.output>capacity(s,"barn");
@@ -1329,16 +1835,24 @@ function cards() {
     const priceClass=current>previous?"price-up":current<previous?"price-down":"price-steady";
     const arrow=current>previous?"▲ ":current<previous?"▼ ":"";
     const rare=Object.hasOwn(rareProducts,id);
-    return card(productIcon[id],p.name+" · "+fmt(s.stock[id]),
-      '<span class="'+priceClass+'"><b>'+arrow+fmt(current)+'</b> akçe / birim</span>'+(winter(s)?" · Kış +%25":rare?" · Sabit fiyat":"")+(round>0&&!rare?" · Önceki "+fmt(previous):""),
+    return card(productIcon[id],p.name+" · "+fmt(s.stock[id])+(s.buildings.organicPlant?' <span class="badge-org">🌿 Organik</span>':""),
+      '<span class="'+priceClass+'"><b>'+arrow+fmt(current)+'</b> akçe / birim</span>'+(s.buildings.organicPlant?" · Organik +%40":"")+(winter(s)?" · Kış +%25":rare?" · Sabit fiyat":"")+(round>0&&!rare?" · Önceki "+fmt(previous):""),
       button("sell",id,"Sat",true));
   });
-  if(screen==="Yapılar") return entries(C.buildings).filter(([id])=>!Object.hasOwn(industryBuildings,id)).map(([id,b])=>{
-    const n=s.buildings[id], info=b.baseCapacity?
-      "Kapasite "+fmt(capacity(s,id))+(n<b.maxLevel?" → "+fmt(capacity(s,id)*b.capacityGrowth):""):
-      ({dairy:"Kaşar, tereyağı ve keçi peyniri",oven:"Ballı kek üretimi",lab:"Dört kalıcı araştırma"})[id];
-    return card(buildingIcon[id],b.name+(n?" · Sv. "+n:""),info,button("build",id,"Kur",true));
-  });
+  if(screen==="Yapılar") {
+    const licCard=card("📜","Organik Üretim Lisansı"+(s.organicLicense?" · ✓ Onaylı":""),
+      "Resmi organik sertifika. Organik Ürün Tesisi kurmayı açar ve ihracat kabul şansını artırır.",
+      button("buyOrganicLicense","","Lisans Al",true));
+    const list=entries(C.buildings).filter(([id])=>!Object.hasOwn(industryBuildings,id)).map(([id,b])=>{
+      const n=s.buildings[id], info=b.baseCapacity?
+        "Kapasite "+fmt(capacity(s,id))+(n<b.maxLevel?" → "+fmt(capacity(s,id)*b.capacityGrowth):""):
+        ({dairy:"Kaşar, tereyağı ve keçi peyniri",oven:"Ballı kek üretimi",lab:"Dört kalıcı araştırma",
+          stud:"At yetiştirme, antrenman, müzayede ve hipodrom yarışlarını açar",
+          organicPlant:"Tüm ürünlere +%40 Organik prim ve ihracat pazarlık bonusu verir"})[id];
+      return card(buildingIcon[id],b.name+(n?" · Sv. "+n:""),info,button("build",id,"Kur",true));
+    });
+    return [...list,licCard];
+  }
   if(screen==="Atölye") return entries(C.recipes).map(([id,r])=>{
     const inputs=entries(r.inputs).map(([k,n])=>n+" "+productIcon[k]+" "+C.products[k].name).join(" + ");
     const q=quote(s,"craft",id);
@@ -1395,6 +1909,7 @@ $("nameForm").onsubmit=event=>{
 $("farmNameInput").oninput=event=>event.target.setCustomValidity("");
 nameDialog.addEventListener("close",()=>$("farmNameInput").setCustomValidity(""));
 function updateHTML(id,html) {
+  if(id==="list"&&document.activeElement?.matches?.("input[data-export-slider]")) return;
   if(htmlCache.get(id)===html) return;
   const root=$(id), active=document.activeElement, key=root.contains(active)?active.dataset:null;
   root.innerHTML=html;htmlCache.set(id,html);
@@ -1410,7 +1925,9 @@ function renderNews() {
     icon+'</span><p>'+text+'</p><time>'+seconds+' sn</time>'+extra+'</div>';
   if(winter(s)&&rain)weatherText="Bereketli Kar · Tarladan tahıl toplama verimi iki katına çıktı.";
   let html=friday(s)?row("fair","⚖️","BÜYÜK CUMA İHALESİ BAŞLADI!",DAY-s.farmTime%DAY,
-    '<button id="showAuctions" type="button">İhaleyi Aç</button>'):"";
+    '<button id="showAuctions" type="button">İhaleyi Aç</button>'):
+    miniDay(s)&&s.miniAuction?row("fair","⚖️","HAFTA İÇİ MİNİ İHALE AÇIK!",DAY-s.farmTime%DAY,
+    '<button id="showAuctions" type="button">Mini İhaleyi Aç</button>'):"";
   if(rain)html+=row("rain",winter(s)?"❄️":"🌧️",weatherText,rain);
   if(event?.kind==="fair") html+=row("fair","🎪",fairText,event.remaining);
   if(event?.kind==="medal") html+=row("fair","🏅",medalText,event.remaining,
@@ -1579,22 +2096,31 @@ function portfolioCards() {
       (refund.why?'<small>Başlangıç tavuğu çiftlikte kalır.</small>':'<small>Son alınanın maliyetinin %70’i iade edilir.</small>'),true);
   })];
 }
-function loanCard() {
-  const l=s.loan, status=l?"Kalan borç: "+fmt(l.left*160+l.due)+" akçe · "+
-    l.left+" taksit"+(l.due?" · "+fmt(l.due)+" gecikmiş":""):"1.000 akçe al · Her oyun gününde 160 akçe · Toplam 1.120 akçe.";
-  return '<section class="auction-panel"><h3>🏦 Köy Sandığı</h3><p>'+status+'</p>'+
-    '<small>Taksit 60 sn arayla kasadan kesilir. Eksik ödeme sonraki akçe gelirinden alınır.</small>'+
-    '<div class="auction-controls">'+button("loan","","Tarım Kredisi Al · 1.000 💰",true)+'</div></section>';
+function miniAuctionSection() {
+  const m=s.miniAuction;
+  if(!miniDay(s)||!m) {
+    return '<section class="auction-panel"><h3>⚖️ Hafta İçi Mini İhaleler</h3><p>Her <b>Pazartesi</b> ve <b>Çarşamba</b> hızlı küçük alım-satım ihaleleri açılır.</p></section>';
+  }
+  const b=m.buy, sale=m.sale;
+  const discount=fmt(Math.round((1-b.bid/b.basis)*1000)/10);
+  const sales=LOT_PRODUCTS.map(id=>button("miniSellBid",id,C.products[id].name+" · "+Math.min(s.stock[id],12),true)).join("");
+  return '<section class="auction-panel"><h3>⚡ Mini İhale Açık · Kapanışa '+(DAY-s.farmTime%DAY)+' sn</h3>'+
+    '<p><b>Alım:</b> '+b.quantity+' × '+C.animals[b.id].name+' · Piyasa '+fmt(b.basis)+' → Teklif <b>'+fmt(b.bid)+' akçe</b> (%'+discount+' indirim) · Önde: <b>'+b.owner+'</b></p>'+
+    '<div class="auction-controls">'+button("miniBuyBid","","Mini Teklif Ver",true)+'</div>'+
+    (sale?'<p style="margin-top:6px"><b>Mini Satış:</b> '+sale.quantity+' '+C.products[sale.id].name+' · <b>'+sale.owner+' '+fmt(sale.offer)+' akçe</b> teklif etti (+%'+fmt(Math.round((sale.offer/sale.basis-1)*1000)/10)+').</p>':
+      '<p style="margin-top:6px"><b>Mini Satış (3–12 ürün, +%6–22 prim):</b></p><div class="auction-controls">'+sales+'</div>')+
+    '</section>';
 }
 function auctionCards() {
   const out=[];
   if(s.lastAuction)out.push('<section class="auction-panel"><h3>Son ihale sonucu</h3><p id="auctionResult"></p></section>');
+  out.push(miniAuctionSection());
   const a=s.auction;
   if(!friday(s)||!a) {
     const seconds=(FRIDAY-s.farmTime%WEEK+WEEK)%WEEK;
-    out.push('<section class="auction-panel"><h3>Her Cuma büyük ihale</h3><p>Sonraki Cuma: '+seconds+' sn.</p>'+
-      '<small>Alımda en yüksek teklif kazanır. Satışta zincirler ayrılan ürüne teklif verir.</small></section>');
-    return [...out,loanCard()];
+    out.push('<section class="auction-panel"><h3>Her Cuma Büyük İhale</h3><p>Sonraki Cuma: '+seconds+' sn.</p>'+
+      '<small>Alımda en yüksek teklif kazanır. Satışta zincirler ayrılan ürüne %6–31 primle teklif verir. (Krediler artık 🏦 Banka sekmesinde!)</small></section>');
+    return out;
   }
   const b=a.buy,sale=a.sale;
   out.push('<section class="auction-panel"><h3>⚖️ Büyük Cuma İhalesi</h3><p>Kapanışa '+(DAY-s.farmTime%DAY)+' sn.</p></section>');
@@ -1611,8 +2137,222 @@ function auctionCards() {
       '<small>Fiyat primi %'+fmt(Math.round((sale.offer/sale.basis-1)*1000)/10)+' · Gün sonunda otomatik satılır.</small>':
       '<p>Bir üründen 5–24 adet ayır. Zincirler piyasanın %6–31 üzerinde teklif verir.</p><div class="auction-controls">'+sales+'</div>')+
     '</section>');
-  return [...out,loanCard()];
+  return out;
 }
+function bankCards() {
+  const score=s.creditScore||600, pct=Math.max(0,Math.min(100,Math.round((score-300)/6)));
+  const scorePanel='<section class="auction-panel"><h3>🏦 Bozkır Tarım Bankası · Kredi Notu: '+score+' / 900</h3>'+
+    '<div class="credit-bar"><span class="credit-pin" style="left:'+pct+'%"></span></div>'+
+    '<small>Düzenli taksit ödemesi kredi notunu yükseltir ve faiz oranını düşürür. Mevcut vade günü: Gün '+fmt(eraDay(s))+'.</small></section>';
+  const l=s.loan, inst=l?.installment||160;
+  const loanStatus=l?'<section class="auction-panel"><h3>📄 Aktif Kredi</h3><p>Kalan borç: <b>'+fmt(l.left*inst+l.due)+' akçe</b> · '+l.left+' taksit × '+fmt(inst)+' akçe'+(l.due?' · ⚠️ '+fmt(l.due)+' gecikmiş':'')+'</p>'+
+    '<div class="auction-controls">'+button("repayLoan","","Erken Kapat",true)+'</div></section>':
+    '<div class="sub-grid">'+entries(LOAN_PLANS).map(([id,p])=>{
+      const r=loanRate(s,p), tot=Math.ceil(p.amount*(1+r)), per=Math.ceil(tot/p.days);
+      return card("💳",p.name,"Faiz: %"+Math.round(r*100)+" · "+p.days+" gün × "+fmt(per)+" akçe (Toplam "+fmt(tot)+")",button("loanPlan",id,"Çek",true));
+    }).join("")+'</div>';
+  const dep=s.deposit||0;
+  const depPanel='<section class="auction-panel"><h3>💰 Vadeli Mevduat Hesabı (Günlük %3 Faiz)</h3>'+
+    '<p>Mevduat Bakiyesi: <b>'+fmt(dep)+' akçe</b> · Tahmini günlük faiz: <b>+'+fmt(Math.min(50000,Math.floor(dep*0.03)))+' akçe</b></p>'+
+    '<div class="auction-controls">'+button("depositAdd","500","500 Yatır",true)+button("depositAdd","2500","2.500 Yatır",false)+button("depositAdd","all","Tümünü Yatır",false)+
+    button("depositWithdraw","500","500 Çek",false)+button("depositWithdraw","all","Hepsini Çek",false)+'</div></section>';
+  return [scorePanel,loanStatus,depPanel];
+}
+function haraCards() {
+  const out=[];
+  if(s.lastRace)out.push('<section class="auction-panel"><h3>🏆 Hipodrom &amp; Müzayede Bülteni</h3><p>'+s.lastRace+'</p></section>');
+  if(!s.buildings.stud) {
+    out.push('<section class="auction-panel"><h3>🐎 Hara (At Ahırı) Gerekli</h3><p>At yetiştirmek, hipodrom yarışlarına katılmak ve safkan müzayedelerine girmek için önce <b>Yapılar</b> sekmesinden Hara (Sv. 3 · 650 Akçe) inşa et.</p>'+
+      '<div class="auction-controls">'+button("build","stud","Hara Kur",true)+'</div></section>');
+    return out;
+  }
+  const ha=s.horseAuction;
+  if(ha) {
+    out.push('<section class="auction-panel"><h3>🔨 Safkan At Müzayedesi · '+ha.name+' ('+HORSE_BREEDS[ha.breed].name+')</h3>'+
+      '<p>Hız: <b>'+ha.speed+'</b> · Dayanıklılık: <b>'+ha.stamina+'</b> · Son Teklif: <b>'+fmt(ha.bid)+' akçe</b> (Önde: <b>'+ha.owner+'</b>)</p>'+
+      '<small>Müzayede 2 oyun gününde bir yenilenir. Teklifin önde biterse safkan harana gelir!</small>'+
+      '<div class="auction-controls">'+button("horseBid","","Müzayedeye Teklif Ver",true)+'</div></section>');
+  }
+  const buyList='<div class="sub-grid">'+entries(HORSE_BREEDS).map(([id,b])=>
+    card(b.icon,b.name,"Hız "+b.speed+" · Dayanıklılık "+b.stamina+" · "+b.detail,button("buyHorse",id,"Satın Al",true))
+  ).join("")+'</div>';
+  out.push('<section class="auction-panel"><h3>🐴 Tay &amp; Safkan Pazarı ('+(s.horses?.length||0)+' / 8 At)</h3></section>',buyList);
+  if(s.horses?.length) {
+    out.push('<section class="auction-panel"><h3>🏇 Haramdaki Atlar (Yarış &amp; Antrenman)</h3></section>');
+    out.push('<div class="sub-grid">'+s.horses.map(h=>
+      card(HORSE_BREEDS[h.breed].icon,h.name+' <span class="badge-hot">'+HORSE_BREEDS[h.breed].name+'</span>',
+        'Hız: <b>'+h.speed+'</b> · Dayanıklılık: <b>'+h.stamina+'</b> · 🏆 '+h.wins+' Birincilik · Değer: '+fmt(h.value)+' 💰',
+        button("raceHorse",h.uid,"🏁 Yarışa Sok",true)+button("trainHorse",h.uid,"💪 Antrenman",false)+button("sellHorseAuction",h.uid,"🔨 Sat",false))
+    ).join("")+'</div>');
+  }
+  return out;
+}
+function contractCards() {
+  const out=[];
+  out.push('<section class="auction-panel"><h3>🤝 Ticaret İtibarı: <b>'+fmt(s.reputation||0)+' Puan</b></h3>'+
+    '<p>Küçük esnaf ve market zincirleriyle düzenli sözleşmeler yaparak garanti prim ve itibar kazan. Yüksek itibar yurt dışı ihracat kabul şansını artırır!</p>'+
+    (s.lastContractMsg?'<small>'+s.lastContractMsg+'</small>':'')+'</section>');
+  const ch=s.contracts?.chain;
+  if(ch) {
+    const reqText=entries(ch.items).map(([k,n])=>productIcon[k]+' '+n+' '+C.products[k].name+' (Stok: '+(s.stock[k]||0)+')').join(" + ");
+    const daysLeft=Math.max(0,ch.deadlineDay-dayOf(s.farmTime));
+    out.push('<section class="auction-panel"><h3>'+ch.icon+' Market Zinciri Sözleşmesi · '+ch.name+(ch.organic?' <span class="badge-org">🌿 Organik Primli</span>':'')+'</h3>'+
+      '<p>İstenen: <b>'+reqText+'</b> · Ödül: <b>'+fmt(ch.reward)+' akçe</b> + 25 İtibar</p>'+
+      '<small>'+(ch.accepted?'⏳ Kalan süre: '+daysLeft+' oyun günü (Teslim edilmezse ceza kesilir!)':'İmzaladığında 3 oyun günü süren başlar.')+'</small>'+
+      '<div class="auction-controls">'+(ch.accepted?button("deliverChain","","Toptan Teslim Et",true):button("acceptChain","","Sözleşmeyi İmzala",true))+'</div></section>');
+  }
+  const locals=s.contracts?.local||[];
+  out.push('<div class="sub-grid">'+locals.map(c=>
+    card(c.icon,c.shop+(c.done?' · ✓ Tamamlandı':''),
+      'İstenen: '+c.quantity+' '+productIcon[c.product]+' '+C.products[c.product].name+' (Stok: '+(s.stock[c.product]||0)+') · Ödül: <b>'+fmt(c.reward)+' akçe</b> + 5 İtibar',
+      button("deliverLocal",c.id,"Teslim Et",true))
+  ).join("")+'</div>');
+  return out;
+}
+function exportCards() {
+  const out=[];
+  const orgText=s.organicLicense?(s.buildings.organicPlant?'🌿 Organik Lisans + Tesis aktif (+Yüksek Kabul Bonusu!)':'📜 Organik Lisans aktif (Organik Tesis kurarak bonusu ikiye katla)'):'💡 İpucu: Yapılar sekmesinden Organik Lisans alarak ülkelerin karşı teklif kabul şansını artırabilirsin.';
+  out.push('<section class="auction-panel"><h3>🌍 Yurt Dışı İhracat &amp; Pazarlık Masası</h3>'+
+    '<p>6 ülkeden yüklü toplu siparişler al. Ülkeler Türkiye fiyatının <b>%6–11 fazlasıyla</b> başlar; sen <b>%6–20 kâr marjı</b> seçerek karşı teklif verebilirsin!</p>'+
+    '<small>'+orgText+'</small>'+
+    '<div class="auction-controls">'+button("refreshExports","","🔄 Yeni Ülke Siparişleri Getir",false)+'</div></section>');
+  for(const o of (s.exportOrders||[])) {
+    const c=EXPORT_COUNTRIES.find(x=>x.id===o.country)||EXPORT_COUNTRIES[0];
+    const p=C.products[o.product];
+    const {eventValue}=saleTerms(s,o.product,o.quantity);
+    const baseVal=boostedRevenue(s,eventValue);
+    const initTotal=Math.ceil(baseVal*(1+o.initMargin/100));
+    const margin=Math.max(6,Math.min(20,o.counterMargin||o.initMargin));
+    const counterTotal=Math.ceil(baseVal*(1+margin/100));
+    const chance=exportChance(s,o,margin);
+    const pillClass=chance>=70?"chance-high":chance>=40?"chance-mid":"chance-low";
+    if(o.status!=="open") {
+      out.push('<section class="auction-panel"><h3>'+c.flag+' '+c.name+' · '+p.name+' Siparişi</h3><p>'+o.note+'</p></section>');
+      continue;
+    }
+    out.push('<section class="auction-panel"><h3>'+c.flag+' '+c.name+' · '+fmt(o.quantity)+' '+productIcon[o.product]+' '+p.name+' (Stok: '+fmt(s.stock[o.product]||0)+')</h3>'+
+      '<p>TR Piyasa Değeri: '+fmt(baseVal)+' akçe · Ülkenin İlk Teklifi: <b>+%'+o.initMargin+' Kâr ('+fmt(initTotal)+' akçe)</b></p>'+
+      '<div class="nego-box">'+
+        '<div class="nego-row"><span>Karşı Teklif Marjın: <b id="lbl_m_'+o.uid+'">+%'+margin+'</b> (<b id="lbl_v_'+o.uid+'">'+fmt(counterTotal)+'</b> akçe)</span>'+
+        '<span id="lbl_c_'+o.uid+'" class="chance-pill '+pillClass+'">Kabul İhtimali: %'+chance+'</span></div>'+
+        '<input type="range" min="6" max="20" step="1" value="'+margin+'" data-export-slider="'+o.uid+'">'+
+      '</div>'+
+      '<div class="auction-controls">'+button("exportAccept",o.uid,"İlk Teklifi Kabul Et",false)+button("exportCounter",o.uid,"Karşı Teklif Gönder",true)+'</div></section>');
+  }
+  return out;
+}
+let remoteLeaderboard=[];
+function localLeaderboardRows() {
+  const rows=[...RIVAL_BARONS.map(r=>({...r,me:false,src:"Baron"}))];
+  const myName=$("profileLabel").textContent||"Sen";
+  const myLux=luxuryTotal(s);
+  rows.push({name:myName,farm:s.farmName,luxury:myLux,me:true,src:"Sen"});
+  try {
+    for(let i=0;i<localStorage.length;i++) {
+      const k=localStorage.key(i);
+      if(!k?.startsWith(PROFILE_PREFIX+"farm:")||k===KEY)continue;
+      const pid=k.slice((PROFILE_PREFIX+"farm:").length);
+      const acc=readAccount(pid);
+      const st=JSON.parse(localStorage.getItem(k)||"null");
+      if(acc&&st)rows.push({name:acc.name,farm:st.farmName||BASE_FARM_NAME,luxury:luxuryTotal(st),me:false,src:"Yerel"});
+    }
+  } catch {}
+  for(const r of remoteLeaderboard) {
+    if(r.username===myName)continue;
+    if(!rows.some(x=>x.name===r.username))rows.push({name:r.username,farm:r.farm_name||"Çiftlik",luxury:Number(r.luxury_value)||0,me:false,src:"Online"});
+  }
+  return rows.sort((a,b)=>b.luxury-a.luxury).slice(0,12);
+}
+function luxuryCards() {
+  const myVal=luxuryTotal(s);
+  const rows=localLeaderboardRows();
+  const sbActive=Boolean(localStorage.getItem("bozkir-sb-url")&&localStorage.getItem("bozkir-sb-key"));
+  const lb='<section class="auction-panel"><h3>🏆 Lüks Servet Liderlik Tablosu '+(sbActive?'<span class="badge-org">🌐 CANLI ONLINE</span>':'<span class="badge-hot">Yerel + Baronlar</span>')+'</h3>'+
+    '<p>Senin Lüks Eşya Servetin: <b>'+fmt(myVal)+' akçe</b></p>'+
+    '<table class="lb-table"><thead><tr><th>#</th><th>Çiftçi</th><th>Çiftlik</th><th>Lüks Serveti</th></tr></thead><tbody>'+
+    rows.map((r,i)=>'<tr class="'+(r.me?'me':'')+'"><td>'+(i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1)+'</td><td>'+r.name+'</td><td>'+r.farm+'</td><td><b>'+fmt(r.luxury)+' 💰</b></td></tr>').join("")+
+    '</tbody></table><small>Gerçek çok oyunculu online sıralama için Ayarlar → Supabase bağlantısını ekleyebilirsin.</small></section>';
+  const shop='<div class="sub-grid">'+LUXURY_ITEMS.map(item=>{
+    const owned=s.luxury?.[item.id]||0, cur=luxuryPrice(s,item);
+    return card(item.icon,item.name+' · '+owned+' adet','Kategori: '+item.cat+' · Katalog: '+fmt(item.price)+' · Piyasa: <b>'+fmt(cur)+' 💰</b>',
+      button("buyLuxury",item.id,"Al",true)+(owned?button("sellLuxury",item.id,"Sat",false):""));
+  }).join("")+'</div>';
+  return [lb,shop];
+}
+const raceDialog=$("raceDialog");
+let raceTimer=null;
+function startLiveRace(horse) {
+  const rivals=[
+    {name:"Şimşek (Bot)",power:Math.max(25,horse.speed+horse.stamina*0.6+(Math.random()*24-12))},
+    {name:"Bozkurt (Bot)",power:Math.max(25,horse.speed+horse.stamina*0.6+(Math.random()*28-14))},
+    {name:"Poyraz (Bot)",power:Math.max(25,horse.speed+horse.stamina*0.6+(Math.random()*26-13))},
+    {name:"Yıldız (Bot)",power:Math.max(25,horse.speed+horse.stamina*0.6+(Math.random()*22-11))}
+  ];
+  const runners=[{name:"⭐ "+horse.name+" (Sen)",me:true,power:horse.speed+horse.stamina*0.65,pos:0},...rivals.map(r=>({...r,me:false,pos:0}))];
+  $("raceSubtitle").textContent=horse.name+" hipodromda koşuyor!";
+  $("raceResultText").textContent="Yarış başladı...";
+  $("raceClose").disabled=true;
+  const drawLanes=()=>{
+    $("raceTrack").innerHTML=runners.map(r=>'<div class="race-lane"><div class="race-lane-head"><span>'+r.name+'</span><span>%'+Math.min(100,Math.round(r.pos))+'</span></div><div class="race-bar"><span class="race-runner" style="left:'+Math.min(92,r.pos*0.92)+'%">🏇</span></div></div>').join("");
+  };
+  drawLanes();
+  if(!raceDialog.open)raceDialog.showModal();
+  clearInterval(raceTimer);
+  raceTimer=setInterval(()=>{
+    let finished=false;
+    for(const r of runners) {
+      r.pos+=3.2+(r.power/38)+Math.random()*4.2;
+      if(r.pos>=100)finished=true;
+    }
+    drawLanes();
+    if(finished) {
+      clearInterval(raceTimer);
+      runners.sort((a,b)=>b.pos-a.pos);
+      const rank=runners.findIndex(r=>r.me)+1;
+      let prize=0, msg="";
+      if(rank===1){prize=650+horse.speed*12;horse.wins++;horse.value+=450;msg="🥇 1. OLDUN! +"+fmt(prize)+" akçe kazandın! "+horse.name+" değeri +450 arttı!";celebrate();play("level");}
+      else if(rank===2){prize=320+horse.speed*5;horse.value+=150;msg="🥈 2. OLDUN! +"+fmt(prize)+" akçe kazandın!";play("sell");}
+      else if(rank===3){prize=160;msg="🥉 3. OLDUN! +"+fmt(prize)+" akçe teselli ödülü.";play("buy");}
+      else {msg="🏁 Yarışı "+rank+". sırada tamamladın. Antrenmanla hızını artır!";}
+      if(prize>0){credit(s,prize);earnXp(s,Math.round(prize/4));}
+      s.lastRace=msg;
+      $("raceResultText").textContent=msg;
+      $("raceClose").disabled=false;
+      save();render();
+    }
+  },140);
+}
+$("raceClose").onclick=()=>{clearInterval(raceTimer);raceDialog.close();};
+async function syncLeaderboardOnline() {
+  const url=(localStorage.getItem("bozkir-sb-url")||"").replace(/\/$/,"");
+  const key=localStorage.getItem("bozkir-sb-key")||"";
+  if(!url||!key||!s)return;
+  const username=$("profileLabel").textContent||"Çiftçi";
+  try {
+    await fetch(url+"/rest/v1/leaderboard?on_conflict=username",{
+      method:"POST",
+      headers:{"apikey":key,"Authorization":"Bearer "+key,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates"},
+      body:JSON.stringify({username,farm_name:s.farmName,luxury_value:luxuryTotal(s),updated_at:new Date().toISOString()})
+    });
+    const res=await fetch(url+"/rest/v1/leaderboard?select=username,farm_name,luxury_value&order=luxury_value.desc&limit=15",{
+      headers:{"apikey":key,"Authorization":"Bearer "+key}
+    });
+    if(res.ok){remoteLeaderboard=await res.json();if(screen==="Lüks")render();}
+  } catch {}
+}
+$("sbSave").onclick=()=>{
+  const u=$("sbUrl").value.trim(), k=$("sbKey").value.trim();
+  if(!u||!k){$("settingsStatus").textContent="URL ve Anon Key alanlarını doldur.";return;}
+  localStorage.setItem("bozkir-sb-url",u);localStorage.setItem("bozkir-sb-key",k);
+  $("settingsStatus").textContent="Supabase bağlantısı kaydedildi! Liderlik tablosu senkronize ediliyor...";
+  syncLeaderboardOnline();
+};
+$("sbClear").onclick=()=>{
+  localStorage.removeItem("bozkir-sb-url");localStorage.removeItem("bozkir-sb-key");
+  $("sbUrl").value="";$("sbKey").value="";remoteLeaderboard=[];
+  $("settingsStatus").textContent="Online liderlik bağlantısı temizlendi.";
+  if(screen==="Lüks")render();
+};
 function renderCalendar() {
   const day=Math.floor(s.farmTime/DAY), season=SEASONS[weekOf(s.farmTime)%4];
   $("calendarDay").textContent="📅 Gün "+fmt(eraDay(s))+" · "+WEEKDAYS[day%7];
@@ -1651,7 +2391,7 @@ function render() {
   const wait=Math.max(0,s.cargoReady-s.farmTime);
   $("cargoStatus").textContent=fast?"🚜 ×3 · "+(s.tractorUntil-s.farmTime)+" sn":ready?"Açmaya hazır":Math.floor(wait/60)+":"+String(wait%60).padStart(2,"0");
   $("horseshoes").textContent="🐎 "+fmt(s.nals)+" Altın Nal · +%"+fmt(prestigePercent(s));
-  const blockedMove=!!(s.loan||s.auction?.buy.held||s.auction?.sale||s.deliveries.length);
+  const blockedMove=!!(s.loan||s.auction?.buy.held||s.auction?.sale||s.miniAuction?.buy.held||s.miniAuction?.sale||s.deliveries.length);
   $("valleyOpen").disabled=currentLevel<5||blockedMove;
   $("valleyOpen").title=blockedMove?"Önce borç, ihale ve nakliye tamamlanmalı.":"";
   $("valleyOpen").textContent=currentLevel<5?"Yeni Vadi · Sv. 5":blockedMove?"Yeni Vadi · Borç, ihale veya nakliye açık":"Çiftliği Devret & Yeni Vadiye Taşın";
@@ -1701,9 +2441,9 @@ function onAction(event) {
     if(current>prev.level)labels.push("▲ Seviye "+current);
     const point=event.detail?{x:event.clientX,y:event.clientY}:null;
     if(labels.length)floating(b,labels,point);
-    if(["animal","quest","build"].includes(action)||current>prev.level)celebrate();
-    if(action==="sell"||action==="sellAll")play("sell");
-    else if(["animal","feed","fill","build","research","quest","craft","worker","medal","buyBid","sellBid","loan","supplier","animalSell","goldCross","airExport","milestone"].includes(action))play("buy");
+    if(["animal","quest","build","buyOrganicLicense","buyHorse","buyLuxury","exportAccept","deliverChain"].includes(action)||current>prev.level)celebrate();
+    if(["sell","sellAll","deliverLocal","deliverChain","exportAccept","exportCounter","sellLuxury","sellHorseAuction"].includes(action))play("sell");
+    else if(["animal","feed","fill","build","research","quest","craft","worker","medal","buyBid","sellBid","miniBuyBid","miniSellBid","loan","loanPlan","repayLoan","depositAdd","depositWithdraw","supplier","animalSell","goldCross","airExport","milestone","buyOrganicLicense","buyHorse","trainHorse","raceHorse","horseBid","acceptChain","buyLuxury","refreshExports"].includes(action))play("buy");
     if(current>prev.level)setTimeout(()=>play("level"),["sell","sellAll"].includes(action)?180:110);
   }
   save();render();
@@ -1728,6 +2468,8 @@ $("settingsOpen").disabled=true;
 $("settingsOpen").onclick=()=>{
   clearConfirmation();
   $("settingsStatus").textContent="";
+  $("sbUrl").value=localStorage.getItem("bozkir-sb-url")||"";
+  $("sbKey").value=localStorage.getItem("bozkir-sb-key")||"";
   settings.showModal();
 };
 $("settingsClose").onclick=()=>settings.close();
@@ -1800,6 +2542,28 @@ function start() {
   $("quickFeed").addEventListener("click",e=>{if(e.target.closest("#clearHerd"))jumpTo("Sürü");});
   $("quantities").onclick=e=>{const b=e.target.closest("[data-quantity]");if(b){choice[screen]=Number(b.dataset.quantity);render();}};
   for(const id of ["list","quickFeed","questList","bulletin"])$(id).onclick=onAction;
+  $("list").addEventListener("input",e=>{
+    const slider=e.target.closest("input[data-export-slider]");
+    if(!slider)return;
+    const uid=slider.dataset.exportSlider;
+    const o=(s.exportOrders||[]).find(x=>x.uid===uid);
+    if(!o)return;
+    const margin=Number(slider.value);
+    o.counterMargin=margin;
+    const chance=exportChance(s,o,margin);
+    const {eventValue}=saleTerms(s,o.product,o.quantity);
+    const total=Math.ceil(boostedRevenue(s,eventValue)*(1+margin/100));
+    const lm=$("lbl_m_"+uid), lv=$("lbl_v_"+uid), lc=$("lbl_c_"+uid);
+    if(lm)lm.textContent="+%"+margin;
+    if(lv)lv.textContent=fmt(total);
+    if(lc){
+      lc.textContent="Kabul İhtimali: %"+chance;
+      lc.className="chance-pill "+(chance>=70?"chance-high":chance>=40?"chance-mid":"chance-low");
+    }
+    const btn=slider.closest(".auction-panel")?.querySelector('button[data-do="exportCounter"]');
+    if(btn)btn.textContent="Karşı Teklif (+"+margin+"% · %"+chance+")";
+  });
+  syncLeaderboardOnline();
   $("settingsOpen").disabled=false;
   $("renameOpen").disabled=false;
   render();
